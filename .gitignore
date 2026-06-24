@@ -1,0 +1,8 @@
+.DS_Store
+.claude/
+node_modules/
+
+# Large video files (host these separately, e.g. on Google Drive or Cloudflare R2)
+assets/hero.mp4
+assets/personal/*.mp4
+assets/personal/*.mov
