@@ -12,10 +12,11 @@
 // ─────────────────────────────────────────────────────────────
 
 export const firebaseConfig = {
-  apiKey: "REPLACE_ME",
-  authDomain: "REPLACE_ME.firebaseapp.com",
-  projectId: "REPLACE_ME",
-  storageBucket: "REPLACE_ME.appspot.com",
-  messagingSenderId: "REPLACE_ME",
-  appId: "REPLACE_ME"
+  apiKey: "AIzaSyCCuasDcs0SHiZOLqbjSfYRAGNZ9IOWpUQ",
+  authDomain: "packet-cards.firebaseapp.com",
+  projectId: "packet-cards",
+  storageBucket: "packet-cards.firebasestorage.app",
+  messagingSenderId: "439647028866",
+  appId: "1:439647028866:web:7e19c3b280eef92e7c969b",
+  measurementId: "G-S7C4437JX8"
 };
