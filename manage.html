@@ -311,7 +311,7 @@
   </div>
 
   <div class="actions">
-    <button class="preview-btn" onclick="window.open('index.html','_blank')">Preview</button>
+    <button class="preview-btn" onclick="window.open('index.html?u='+USER_ID,'_blank')">Preview</button>
     <button class="save-btn" onclick="save()">Save Changes</button>
   </div>
 
@@ -320,34 +320,23 @@
 <div class="toast" id="toast">Saved</div>
 
 <script>
-  const DEFAULTS = {
-    name: 'Andres Cruz',
-    title: 'Videographer & Creative',
-    bio: 'Crafting visual stories that move people. Open to collaborations, projects, and new connections.',
-    location: 'Philippines',
-    email: '',
-    phone: '',
-    whatsapp: '',
-    telegram: '',
-    socials: [
-      { platform: 'Instagram', handle: '@username', url: 'https://instagram.com/' },
-      { platform: 'LinkedIn', handle: 'Andres Cruz', url: 'https://linkedin.com/in/' },
-      { platform: 'TikTok', handle: '@username', url: 'https://tiktok.com/@' },
-      { platform: 'X', handle: '@username', url: 'https://x.com/' }
-    ],
-    work: [
-      { label: 'Resume', description: 'View or download', url: '' },
-      { label: 'Portfolio', description: 'Video & creative work', url: '' }
-    ]
-  };
+  const USER_ID = new URLSearchParams(window.location.search).get('u') || 'andres';
+  let PROFILE_KEY = null;
 
-  function load() {
-    try {
-      const stored = localStorage.getItem('nfc-card-data');
-      return stored ? JSON.parse(stored) : { ...DEFAULTS };
-    } catch {
-      return { ...DEFAULTS };
+  async function load() {
+    const stored = localStorage.getItem('nfc-card-' + USER_ID);
+    if (stored) {
+      try { return JSON.parse(stored); } catch {}
     }
+    try {
+      const res = await fetch('profiles.json');
+      const profiles = await res.json();
+      if (profiles[USER_ID]) {
+        PROFILE_KEY = profiles[USER_ID].key || null;
+        return profiles[USER_ID];
+      }
+    } catch {}
+    return null;
   }
 
   function save() {
@@ -363,7 +352,7 @@
       socials: getSocials(),
       work: getWork()
     };
-    localStorage.setItem('nfc-card-data', JSON.stringify(data));
+    localStorage.setItem('nfc-card-' + USER_ID, JSON.stringify(data));
     showToast('Saved');
   }
 
@@ -424,18 +413,35 @@
     setTimeout(() => t.classList.remove('show'), 2000);
   }
 
-  // Init
-  const data = load();
-  document.getElementById('name').value = data.name || '';
-  document.getElementById('title').value = data.title || '';
-  document.getElementById('bio').value = data.bio || '';
-  document.getElementById('location').value = data.location || '';
-  document.getElementById('email').value = data.email || '';
-  document.getElementById('phone').value = data.phone || '';
-  document.getElementById('whatsapp').value = data.whatsapp || '';
-  document.getElementById('telegram').value = data.telegram || '';
-  (data.socials || []).forEach(s => addSocial(s));
-  (data.work || []).forEach(w => addWork(w));
+  async function init() {
+    const data = await load();
+    if (!data) {
+      document.querySelector('.manage').innerHTML = '<div class="page-header"><h1>Profile not found</h1><p>The profile "' + esc(USER_ID) + '" does not exist.</p></div>';
+      return;
+    }
+
+    if (PROFILE_KEY && !localStorage.getItem('nfc-auth-' + USER_ID)) {
+      const entered = prompt('Enter your edit key for "' + USER_ID + '":');
+      if (entered !== PROFILE_KEY) {
+        document.querySelector('.manage').innerHTML = '<div class="page-header"><h1>Access denied</h1><p>Incorrect edit key.</p></div>';
+        return;
+      }
+      localStorage.setItem('nfc-auth-' + USER_ID, 'true');
+    }
+
+    document.getElementById('name').value = data.name || '';
+    document.getElementById('title').value = data.title || '';
+    document.getElementById('bio').value = data.bio || '';
+    document.getElementById('location').value = data.location || '';
+    document.getElementById('email').value = data.email || '';
+    document.getElementById('phone').value = data.phone || '';
+    document.getElementById('whatsapp').value = data.whatsapp || '';
+    document.getElementById('telegram').value = data.telegram || '';
+    (data.socials || []).forEach(s => addSocial(s));
+    (data.work || []).forEach(w => addWork(w));
+  }
+
+  init();
 </script>
 
 </body>
