@@ -60,26 +60,28 @@
     }
     .hero .stage {
       position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-      perspective: 900px; pointer-events: none;
+      perspective: 1250px; perspective-origin: 50% 40%; pointer-events: none; overflow: hidden;
     }
     .hero .plane {
-      width: 1100px; max-width: 150vw; height: 620px;
-      transform: rotateX(62deg) rotateZ(0deg); transform-style: preserve-3d;
-      opacity: 0.9;
+      width: 1600px; max-width: 215vw; height: 900px;
+      transform: translateY(64px) rotateX(66deg); transform-style: preserve-3d;
+    }
+    .hero .glow {
+      position: absolute; width: 740px; height: 740px; left: 50%; top: 46%;
+      transform: translate(-50%, -50%); pointer-events: none; z-index: 1;
+      background: radial-gradient(circle, rgba(0,113,227,0.12), rgba(0,194,255,0.05) 38%, transparent 70%);
     }
     .hero-content { position: relative; z-index: 2; }
     .wordmark {
       font-size: clamp(72px, 16vw, 184px); font-weight: 700; letter-spacing: -0.05em; line-height: 0.9;
-      background: linear-gradient(180deg, #111 0%, #444 100%);
+      background: linear-gradient(180deg, #0b0b0c 0%, #3a3a3c 100%);
       -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
     }
     .hero .sub { margin-top: 22px; font-size: clamp(17px, 2.4vw, 22px); color: var(--secondary); font-style: italic; font-weight: 300; }
     .hero .scroll-hint { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); color: var(--divider); font-size: 24px; animation: bob 1.8s ease-in-out infinite; z-index: 2; }
     @keyframes bob { 0%,100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 8px); } }
 
-    .packet { fill: var(--accent); }
-    .map-dot { fill: #d8d8dc; }
-    .arc { fill: none; stroke: #e9e9ec; stroke-width: 1; }
+    .arc { fill: none; stroke: #e3e6ea; stroke-width: 1; }
 
     /* ── About ── */
     .about { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; max-width: 1100px; margin: 0 auto; }
@@ -123,16 +125,34 @@
 
   <!-- ── Hero ── -->
   <header class="hero">
+    <div class="glow"></div>
     <div class="stage">
-      <svg class="plane" viewBox="0 0 1100 620" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <g id="map"></g>
+      <svg class="plane" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="pkt" x1="0" y1="0" x2="0.9" y2="1">
+            <stop offset="0" stop-color="#39b0ff"/><stop offset="1" stop-color="#0257d4"/>
+          </linearGradient>
+          <radialGradient id="node" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0" stop-color="#86c8ff"/><stop offset="1" stop-color="#0071e3"/>
+          </radialGradient>
+          <filter id="pktShadow" x="-80%" y="-80%" width="260%" height="260%">
+            <feDropShadow dx="0" dy="2.5" stdDeviation="3" flood-color="#0257d4" flood-opacity="0.5"/>
+          </filter>
+          <linearGradient id="fog" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ffffff" stop-opacity="1"/>
+            <stop offset="0.44" stop-color="#ffffff" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <g id="grid"></g>
         <g id="arcs"></g>
+        <g id="nodes"></g>
         <g id="packets"></g>
+        <rect x="0" y="0" width="1600" height="900" fill="url(#fog)"/>
       </svg>
     </div>
     <div class="hero-content">
       <div class="wordmark">Packet</div>
-      <div class="sub">Your world, <b style="font-style:normal;font-weight:600;color:#1d1d1f">one tap</b> away.</div>
+      <div class="sub">Skip the paper cards. Just <b style="font-style:normal;font-weight:600;color:#1d1d1f">tap.</b></div>
     </div>
     <div class="scroll-hint">⌄</div>
   </header>
@@ -204,54 +224,84 @@
   <footer>Made with <b>Packet</b> · tap · connect · collaborate</footer>
 
   <script>
-    // Stylized "packets crossing a map" backdrop — a dotted plane with arcs and
-    // little packets gliding along them. (First pass; richer 3D can come later.)
+    // Scroll-driven 3D packet field: a perspective grid floor with arcs running
+    // in every direction and gradient "packet" cards that glide ONLY as you scroll.
     const NS = 'http://www.w3.org/2000/svg';
-    const mapG = document.getElementById('map');
+    const W = 1600, H = 900;
+    const gridG = document.getElementById('grid');
     const arcsG = document.getElementById('arcs');
+    const nodesG = document.getElementById('nodes');
     const packetsG = document.getElementById('packets');
+    const rnd = (a, b) => a + Math.random() * (b - a);
 
-    // dotted grid (denser in the middle to suggest a map/landmass)
-    for (let y = 0; y < 620; y += 26) {
-      for (let x = 0; x < 1100; x += 26) {
-        const cx = x + (y / 26 % 2 ? 13 : 0);
-        const d = Math.hypot(cx - 550, y - 310) / 560;
-        if (Math.random() > 0.35 + d * 0.5) continue;
-        const dot = document.createElementNS(NS, 'circle');
-        dot.setAttribute('cx', cx); dot.setAttribute('cy', y);
-        dot.setAttribute('r', 1.6); dot.setAttribute('class', 'map-dot');
-        dot.setAttribute('opacity', (1 - d).toFixed(2));
-        mapG.appendChild(dot);
-      }
+    // perspective floor grid (recedes into the distance once tilted)
+    for (let gx = 0; gx <= W; gx += 64) addLine(gx, 0, gx, H);
+    for (let gy = 0; gy <= H; gy += 64) addLine(0, gy, W, gy);
+    function addLine(x1, y1, x2, y2) {
+      const l = document.createElementNS(NS, 'line');
+      l.setAttribute('x1', x1); l.setAttribute('y1', y1); l.setAttribute('x2', x2); l.setAttribute('y2', y2);
+      l.setAttribute('stroke', '#edeff2'); l.setAttribute('stroke-width', '1');
+      gridG.appendChild(l);
     }
 
-    // arcs + travelling packets
-    const routes = [
-      [120, 360, 560, 160, 980, 380],
-      [200, 180, 540, 420, 920, 200],
-      [80, 480, 480, 300, 1000, 520],
-      [300, 540, 600, 120, 880, 460],
-      [160, 260, 520, 500, 940, 300],
-    ];
-    routes.forEach((r, i) => {
-      const [x1, y1, cx, cy, x2, y2] = r;
-      const d = `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`;
+    // arcs going from everywhere to everywhere, each carrying one packet
+    const packets = [];
+    for (let i = 0; i < 24; i++) {
+      const x1 = rnd(40, W - 40), y1 = rnd(40, H - 40);
+      const x2 = rnd(40, W - 40), y2 = rnd(40, H - 40);
+      const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+      const d = `M ${x1} ${y1} Q ${mx + rnd(-280, 280)} ${my + rnd(-280, 280)} ${x2} ${y2}`;
+
       const path = document.createElementNS(NS, 'path');
       path.setAttribute('d', d); path.setAttribute('class', 'arc');
+      path.setAttribute('opacity', rnd(0.25, 0.6).toFixed(2));
       arcsG.appendChild(path);
 
+      [[x1, y1], [x2, y2]].forEach(([nx, ny]) => {
+        const c = document.createElementNS(NS, 'circle');
+        c.setAttribute('cx', nx); c.setAttribute('cy', ny); c.setAttribute('r', 3);
+        c.setAttribute('fill', 'url(#node)'); c.setAttribute('opacity', '0.65');
+        nodesG.appendChild(c);
+      });
+
+      const size = rnd(12, 18);
       const p = document.createElementNS(NS, 'rect');
-      p.setAttribute('width', 9); p.setAttribute('height', 9); p.setAttribute('rx', 2.5);
-      p.setAttribute('class', 'packet'); p.setAttribute('x', -4.5); p.setAttribute('y', -4.5);
-      const anim = document.createElementNS(NS, 'animateMotion');
-      anim.setAttribute('dur', (5 + i * 1.3) + 's');
-      anim.setAttribute('repeatCount', 'indefinite');
-      anim.setAttribute('rotate', 'auto');
-      anim.setAttribute('path', d);
-      anim.setAttribute('begin', (i * 0.8) + 's');
-      p.appendChild(anim);
+      p.setAttribute('width', size); p.setAttribute('height', size * 0.68);
+      p.setAttribute('rx', 3); p.setAttribute('fill', 'url(#pkt)'); p.setAttribute('filter', 'url(#pktShadow)');
       packetsG.appendChild(p);
-    });
+      const hl = document.createElementNS(NS, 'rect');
+      hl.setAttribute('width', size * 0.5); hl.setAttribute('height', 1.5); hl.setAttribute('rx', 0.75);
+      hl.setAttribute('fill', '#fff');
+      packetsG.appendChild(hl);
+
+      packets.push({ path, len: path.getTotalLength(), p, hl, size,
+        offset: Math.random(), speed: rnd(0.6, 1.7) * (Math.random() < 0.5 ? 1 : -1) });
+    }
+
+    // motion is tied to scroll position; packets sit still when you don't scroll
+    let target = 0, prog = 0, raf = null;
+    function frame() {
+      prog += (target - prog) * 0.12;
+      for (const k of packets) {
+        let t = (k.offset + prog * k.speed) % 1; if (t < 0) t += 1;
+        const pt = k.path.getPointAtLength(t * k.len);
+        const depth = pt.y / H;                 // 0 = far/back, 1 = near/front
+        const sc = (0.65 + depth * 0.65).toFixed(3);
+        const op = (0.3 + depth * 0.65).toFixed(2);
+        k.p.setAttribute('transform', `translate(${pt.x - k.size / 2} ${pt.y - k.size * 0.34}) scale(${sc})`);
+        k.p.setAttribute('opacity', op);
+        k.hl.setAttribute('transform', `translate(${pt.x - k.size * 0.25} ${pt.y - k.size * 0.28}) scale(${sc})`);
+        k.hl.setAttribute('opacity', (op * 0.55).toFixed(2));
+      }
+      if (Math.abs(target - prog) > 0.0002) raf = requestAnimationFrame(frame);
+      else raf = null;
+    }
+    function onScroll() {
+      target = window.scrollY / Math.max(1, window.innerHeight * 1.1);
+      if (!raf) raf = requestAnimationFrame(frame);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    frame();   // initial static placement
   </script>
 
 </body>
