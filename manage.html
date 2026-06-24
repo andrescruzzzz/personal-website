@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Manage Card</title>
+  <title>Edit your card</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -27,421 +27,274 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    body {
-      display: flex;
-      justify-content: center;
-      padding: 40px 20px 100px;
-    }
+    body { display: flex; justify-content: center; padding: 40px 20px 100px; }
+    .wrap { width: 100%; max-width: 480px; }
 
-    .manage {
-      width: 100%;
-      max-width: 480px;
-    }
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 30px; font-weight: 700; letter-spacing: -0.5px; }
+    .page-header p { font-size: 14px; color: var(--secondary); margin-top: 4px; }
 
-    .page-header {
-      margin-bottom: 32px;
-    }
-
-    .page-header h1 {
-      font-size: 32px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-    }
-
-    .page-header p {
-      font-size: 14px;
-      color: var(--secondary);
-      margin-top: 4px;
-    }
-
-    /* ── Cards ── */
     .panel {
-      background: var(--surface);
-      border-radius: var(--radius);
-      padding: 20px;
-      margin-bottom: 16px;
-      box-shadow: 0 0.5px 1px rgba(0,0,0,0.04);
+      background: var(--surface); border-radius: var(--radius); padding: 24px;
+      margin-bottom: 16px; box-shadow: 0 0.5px 1px rgba(0,0,0,0.04);
     }
-
     .panel-title {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      color: var(--secondary);
-      margin-bottom: 16px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+      text-transform: uppercase; color: var(--secondary); margin-bottom: 16px;
     }
 
-    /* ── Form fields ── */
-    .field {
-      margin-bottom: 14px;
-    }
-
-    .field:last-child {
-      margin-bottom: 0;
-    }
-
-    .field label {
-      display: block;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--secondary);
-      margin-bottom: 5px;
-    }
-
+    .field { margin-bottom: 14px; }
+    .field:last-child { margin-bottom: 0; }
+    .field label { display: block; font-size: 12px; font-weight: 500; color: var(--secondary); margin-bottom: 5px; }
     .field input, .field textarea {
-      width: 100%;
-      padding: 10px 12px;
-      font-size: 15px;
-      font-family: inherit;
-      color: var(--text);
-      background: var(--bg);
-      border: 1px solid transparent;
-      border-radius: 8px;
-      outline: none;
+      width: 100%; padding: 11px 13px; font-size: 15px; font-family: inherit;
+      color: var(--text); background: var(--bg);
+      border: 1px solid transparent; border-radius: 8px; outline: none;
       transition: border 0.15s, box-shadow 0.15s;
     }
-
     .field input:focus, .field textarea:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.12);
+      border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,113,227,0.12);
     }
+    .field input::placeholder { color: var(--divider); }
+    .field textarea { resize: vertical; min-height: 60px; }
 
-    .field input::placeholder, .field textarea::placeholder {
-      color: var(--divider);
-    }
-
-    .field textarea {
-      resize: vertical;
-      min-height: 60px;
-    }
-
-    /* ── Social rows ── */
-    .social-entry {
-      display: flex;
-      gap: 8px;
-      align-items: flex-end;
-      margin-bottom: 12px;
-      padding-bottom: 12px;
+    .entry {
+      display: flex; gap: 8px; align-items: flex-end;
+      margin-bottom: 12px; padding-bottom: 12px;
       border-bottom: 0.5px solid rgba(210,210,215,0.4);
     }
-
-    .social-entry:last-of-type {
-      border-bottom: none;
-      margin-bottom: 0;
-      padding-bottom: 0;
-    }
-
-    .social-entry .field {
-      flex: 1;
-      margin-bottom: 0;
-    }
+    .entry:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .entry .field { flex: 1; margin-bottom: 0; }
 
     .remove-btn {
-      width: 36px;
-      height: 36px;
-      border: none;
-      background: none;
-      color: var(--danger);
-      font-size: 20px;
-      cursor: pointer;
-      border-radius: 8px;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 36px; height: 36px; border: none; background: none;
+      color: var(--danger); font-size: 20px; cursor: pointer; border-radius: 8px;
+      flex-shrink: 0; display: flex; align-items: center; justify-content: center;
       transition: background 0.15s;
-      margin-bottom: 0;
     }
+    .remove-btn:hover { background: rgba(255,59,48,0.08); }
 
-    .remove-btn:hover {
-      background: rgba(255, 59, 48, 0.08);
-    }
-
-    /* ── Buttons ── */
     .add-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 8px 14px;
-      font-size: 13px;
-      font-weight: 500;
-      font-family: inherit;
-      color: var(--accent);
-      background: none;
-      border: 1px dashed var(--divider);
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.15s;
-      margin-top: 12px;
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 8px 14px; font-size: 13px; font-weight: 500; font-family: inherit;
+      color: var(--accent); background: none; border: 1px dashed var(--divider);
+      border-radius: 8px; cursor: pointer; margin-top: 12px; transition: background 0.15s;
     }
+    .add-btn:hover { background: rgba(0,113,227,0.04); }
 
-    .add-btn:hover {
-      background: rgba(0, 113, 227, 0.04);
-    }
-
-    .actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 24px;
-    }
-
+    .actions { display: flex; gap: 10px; margin-top: 24px; }
     .save-btn, .preview-btn {
-      flex: 1;
-      padding: 14px;
-      font-size: 15px;
-      font-weight: 600;
-      font-family: inherit;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
+      flex: 1; padding: 14px; font-size: 15px; font-weight: 600; font-family: inherit;
+      border: none; border-radius: 12px; cursor: pointer; transition: background 0.15s, transform 0.1s;
+    }
+    .save-btn { background: var(--accent); color: white; }
+    .save-btn:hover { background: var(--accent-hover); }
+    .save-btn:active, .preview-btn:active { transform: scale(0.98); }
+    .preview-btn { background: var(--surface); color: var(--text); box-shadow: 0 0.5px 1px rgba(0,0,0,0.08); }
+    .preview-btn:hover { background: #ebebed; }
+
+    .primary-btn {
+      width: 100%; padding: 14px; font-size: 15px; font-weight: 600; font-family: inherit;
+      border: none; border-radius: 12px; cursor: pointer; background: var(--accent); color: white;
+      transition: background 0.15s, transform 0.1s; margin-top: 8px;
+    }
+    .primary-btn:hover { background: var(--accent-hover); }
+    .primary-btn:disabled { opacity: 0.5; cursor: default; }
+
+    .signout-link {
+      background: none; border: none; color: var(--secondary); font-size: 13px;
+      font-family: inherit; cursor: pointer; margin-top: 16px; display: block;
+      text-align: center; width: 100%; text-decoration: underline;
     }
 
-    .save-btn {
-      background: var(--accent);
-      color: white;
-    }
+    .error-msg { color: var(--danger); font-size: 13px; margin-top: 12px; text-align: center; min-height: 16px; }
 
-    .save-btn:hover {
-      background: var(--accent-hover);
-    }
+    .center { text-align: center; }
+    .center h2 { font-size: 22px; font-weight: 600; }
+    .center p { color: var(--secondary); font-size: 15px; line-height: 1.5; margin: 8px 0 20px; }
 
-    .save-btn:active, .preview-btn:active {
-      transform: scale(0.98);
+    .spinner {
+      width: 28px; height: 28px; border: 3px solid var(--divider);
+      border-top-color: var(--secondary); border-radius: 50%; margin: 40px auto;
+      animation: spin 0.7s linear infinite;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .preview-btn {
-      background: var(--surface);
-      color: var(--text);
-      box-shadow: 0 0.5px 1px rgba(0,0,0,0.08);
-    }
+    .hidden { display: none !important; }
 
-    .preview-btn:hover {
-      background: #ebebed;
-    }
-
-    /* ── Toast ── */
     .toast {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
+      position: fixed; bottom: 30px; left: 50%;
       transform: translateX(-50%) translateY(80px);
-      background: var(--text);
-      color: white;
-      padding: 12px 24px;
-      border-radius: 50px;
-      font-size: 14px;
-      font-weight: 500;
-      opacity: 0;
-      transition: transform 0.3s, opacity 0.3s;
-      pointer-events: none;
-      z-index: 100;
+      background: var(--text); color: white; padding: 12px 24px; border-radius: 50px;
+      font-size: 14px; font-weight: 500; opacity: 0;
+      transition: transform 0.3s, opacity 0.3s; pointer-events: none; z-index: 100;
     }
-
-    .toast.show {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
-    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
   </style>
 </head>
 <body>
 
-<div class="manage">
+<div class="wrap">
 
-  <div class="page-header">
-    <h1>Manage Card</h1>
-    <p>Edit your info below, then save.</p>
-  </div>
+  <!-- Loading -->
+  <div id="loading"><div class="spinner"></div></div>
 
-  <!-- Profile -->
-  <div class="panel">
-    <div class="panel-title">Profile</div>
-    <div class="field">
-      <label>Full Name</label>
-      <input type="text" id="name" placeholder="Andres Cruz" />
-    </div>
-    <div class="field">
-      <label>Title</label>
-      <input type="text" id="title" placeholder="Videographer & Creative" />
-    </div>
-    <div class="field">
-      <label>Bio</label>
-      <textarea id="bio" placeholder="A short tagline about yourself..."></textarea>
-    </div>
-    <div class="field">
-      <label>Location</label>
-      <input type="text" id="location" placeholder="Philippines" />
+  <!-- Sign in -->
+  <div id="signin-step" class="hidden">
+    <div class="page-header"><h1>Sign in</h1><p>Sign in to edit your card.</p></div>
+    <div class="panel">
+      <div class="field"><label>Email</label><input type="email" id="signin-email" placeholder="you@example.com" autocomplete="email" /></div>
+      <div class="field"><label>Password</label><input type="password" id="signin-password" placeholder="Your password" autocomplete="current-password" /></div>
+      <button class="primary-btn" id="signin-submit">Sign in</button>
+      <div class="error-msg" id="signin-error"></div>
     </div>
   </div>
 
-  <!-- Socials -->
-  <div class="panel">
-    <div class="panel-title">Socials</div>
-    <div id="socials-list"></div>
-    <button class="add-btn" onclick="addSocial()">+ Add Social</button>
-  </div>
-
-  <!-- Work -->
-  <div class="panel">
-    <div class="panel-title">Work Links</div>
-    <div id="work-list"></div>
-    <button class="add-btn" onclick="addWork()">+ Add Link</button>
-  </div>
-
-  <!-- Contact -->
-  <div class="panel">
-    <div class="panel-title">Contact</div>
-    <div class="field">
-      <label>Email</label>
-      <input type="email" id="email" placeholder="you@example.com" />
-    </div>
-    <div class="field">
-      <label>Phone</label>
-      <input type="tel" id="phone" placeholder="+63 XXX XXX XXXX" />
-    </div>
-    <div class="field">
-      <label>WhatsApp Number (with country code)</label>
-      <input type="tel" id="whatsapp" placeholder="+63XXXXXXXXXX" />
-    </div>
-    <div class="field">
-      <label>Telegram Username</label>
-      <input type="text" id="telegram" placeholder="@username" />
+  <!-- Access denied -->
+  <div id="denied-step" class="hidden">
+    <div class="panel center">
+      <h2>Not your card</h2>
+      <p>You're signed in, but this card belongs to a different account.</p>
+      <button class="signout-link" id="denied-signout">Sign out</button>
     </div>
   </div>
 
-  <div class="actions">
-    <button class="preview-btn" onclick="window.open('index.html?u='+USER_ID,'_blank')">Preview</button>
-    <button class="save-btn" onclick="save()">Save Changes</button>
+  <!-- Not found -->
+  <div id="notfound-step" class="hidden">
+    <div class="panel center">
+      <h2>Card not set up yet</h2>
+      <p>This card hasn't been claimed. Tap it to set it up.</p>
+    </div>
+  </div>
+
+  <!-- Setup needed -->
+  <div id="setup-needed" class="hidden">
+    <div class="panel center">
+      <h2>Setup needed</h2>
+      <p>Firebase isn't configured yet. Add your project keys to <b>firebase-config.js</b> — see SETUP.md.</p>
+    </div>
+  </div>
+
+  <!-- Editor -->
+  <div id="editor-step" class="hidden">
+    <div class="page-header"><h1>Edit your card</h1><p>Update your info below, then save.</p></div>
+
+    <div class="panel">
+      <div class="panel-title">Profile</div>
+      <div class="field"><label>Full Name</label><input type="text" id="name" placeholder="Your name" /></div>
+      <div class="field"><label>Title</label><input type="text" id="title" placeholder="e.g. Videographer & Creative" /></div>
+      <div class="field"><label>Bio</label><textarea id="bio" placeholder="A short tagline about yourself..."></textarea></div>
+      <div class="field"><label>Location</label><input type="text" id="location" placeholder="City, Country" /></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Socials</div>
+      <div id="socials-list"></div>
+      <button type="button" class="add-btn" id="add-social">+ Add Social</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Work Links</div>
+      <div id="work-list"></div>
+      <button type="button" class="add-btn" id="add-work">+ Add Link</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Contact</div>
+      <div class="field"><label>Email</label><input type="email" id="email" placeholder="you@example.com" /></div>
+      <div class="field"><label>Phone</label><input type="tel" id="phone" placeholder="+63 XXX XXX XXXX" /></div>
+      <div class="field"><label>WhatsApp Number (with country code)</label><input type="tel" id="whatsapp" placeholder="+63XXXXXXXXXX" /></div>
+      <div class="field"><label>Telegram Username</label><input type="text" id="telegram" placeholder="@username" /></div>
+    </div>
+
+    <div class="actions">
+      <button class="preview-btn" id="preview-btn">Preview</button>
+      <button class="save-btn" id="save-btn">Save Changes</button>
+    </div>
+    <button class="signout-link" id="signout-link">Sign out</button>
   </div>
 
 </div>
 
 <div class="toast" id="toast">Saved</div>
 
-<script>
-  const USER_ID = new URLSearchParams(window.location.search).get('u') || 'andres';
-  let PROFILE_KEY = null;
+<script type="module">
+  import { db, auth, NOT_CONFIGURED } from './firebase-init.js';
+  import { doc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { addSocialRow, addWorkRow, gatherForm, fillForm } from './card-shared.js';
 
-  async function load() {
-    const stored = localStorage.getItem('nfc-card-' + USER_ID);
-    if (stored) {
-      try { return JSON.parse(stored); } catch {}
-    }
+  const CARD_ID = new URLSearchParams(window.location.search).get('id');
+
+  function show(id) {
+    ['loading', 'signin-step', 'denied-step', 'notfound-step', 'setup-needed', 'editor-step']
+      .forEach(s => document.getElementById(s).classList.toggle('hidden', s !== id));
+  }
+
+  document.getElementById('add-social').addEventListener('click', () => addSocialRow());
+  document.getElementById('add-work').addEventListener('click', () => addWorkRow());
+  document.getElementById('preview-btn').addEventListener('click', () => window.open('index.html?id=' + encodeURIComponent(CARD_ID), '_blank'));
+  document.getElementById('signout-link').addEventListener('click', () => signOut(auth));
+  document.getElementById('denied-signout').addEventListener('click', () => signOut(auth));
+
+  document.getElementById('signin-submit').addEventListener('click', async () => {
+    const email = document.getElementById('signin-email').value.trim();
+    const password = document.getElementById('signin-password').value;
+    const errEl = document.getElementById('signin-error');
+    errEl.textContent = '';
+    if (!email || !password) { errEl.textContent = 'Enter your email and password.'; return; }
     try {
-      const res = await fetch('profiles.json');
-      const profiles = await res.json();
-      if (profiles[USER_ID]) {
-        PROFILE_KEY = profiles[USER_ID].key || null;
-        return profiles[USER_ID];
-      }
-    } catch {}
-    return null;
-  }
-
-  function save() {
-    const data = {
-      name: document.getElementById('name').value,
-      title: document.getElementById('title').value,
-      bio: document.getElementById('bio').value,
-      location: document.getElementById('location').value,
-      email: document.getElementById('email').value,
-      phone: document.getElementById('phone').value,
-      whatsapp: document.getElementById('whatsapp').value,
-      telegram: document.getElementById('telegram').value,
-      socials: getSocials(),
-      work: getWork()
-    };
-    localStorage.setItem('nfc-card-' + USER_ID, JSON.stringify(data));
-    showToast('Saved');
-  }
-
-  function getSocials() {
-    const entries = document.querySelectorAll('#socials-list .social-entry');
-    return Array.from(entries).map(el => ({
-      platform: el.querySelector('.s-platform').value,
-      handle: el.querySelector('.s-handle').value,
-      url: el.querySelector('.s-url').value
-    }));
-  }
-
-  function getWork() {
-    const entries = document.querySelectorAll('#work-list .social-entry');
-    return Array.from(entries).map(el => ({
-      label: el.querySelector('.w-label').value,
-      description: el.querySelector('.w-desc').value,
-      url: el.querySelector('.w-url').value
-    }));
-  }
-
-  function addSocial(s = { platform: '', handle: '', url: '' }) {
-    const list = document.getElementById('socials-list');
-    const div = document.createElement('div');
-    div.className = 'social-entry';
-    div.innerHTML = `
-      <div class="field"><label>Platform</label><input class="s-platform" placeholder="Instagram" value="${esc(s.platform)}" /></div>
-      <div class="field"><label>Handle</label><input class="s-handle" placeholder="@username" value="${esc(s.handle)}" /></div>
-      <div class="field"><label>URL</label><input class="s-url" placeholder="https://..." value="${esc(s.url)}" /></div>
-      <button class="remove-btn" onclick="this.parentElement.remove()" title="Remove">&times;</button>
-    `;
-    list.appendChild(div);
-  }
-
-  function addWork(w = { label: '', description: '', url: '' }) {
-    const list = document.getElementById('work-list');
-    const div = document.createElement('div');
-    div.className = 'social-entry';
-    div.innerHTML = `
-      <div class="field"><label>Title</label><input class="w-label" placeholder="Resume" value="${esc(w.label)}" /></div>
-      <div class="field"><label>Subtitle</label><input class="w-desc" placeholder="View or download" value="${esc(w.description)}" /></div>
-      <div class="field"><label>URL</label><input class="w-url" placeholder="https://..." value="${esc(w.url)}" /></div>
-      <button class="remove-btn" onclick="this.parentElement.remove()" title="Remove">&times;</button>
-    `;
-    list.appendChild(div);
-  }
-
-  function esc(str) {
-    const d = document.createElement('div');
-    d.textContent = str || '';
-    return d.innerHTML.replace(/"/g, '&quot;');
-  }
-
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2000);
-  }
-
-  async function init() {
-    const data = await load();
-    if (!data) {
-      document.querySelector('.manage').innerHTML = '<div class="page-header"><h1>Profile not found</h1><p>The profile "' + esc(USER_ID) + '" does not exist.</p></div>';
-      return;
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (e) {
+      const map = {
+        'auth/wrong-password': 'Incorrect password.',
+        'auth/user-not-found': 'No account with that email.',
+        'auth/invalid-credential': 'Email or password is incorrect.',
+        'auth/invalid-email': 'That email address looks invalid.',
+      };
+      errEl.textContent = map[e.code] || e.message;
     }
+  });
 
-    if (PROFILE_KEY && !localStorage.getItem('nfc-auth-' + USER_ID)) {
-      const entered = prompt('Enter your edit key for "' + USER_ID + '":');
-      if (entered !== PROFILE_KEY) {
-        document.querySelector('.manage').innerHTML = '<div class="page-header"><h1>Access denied</h1><p>Incorrect edit key.</p></div>';
-        return;
-      }
-      localStorage.setItem('nfc-auth-' + USER_ID, 'true');
+  document.getElementById('save-btn').addEventListener('click', async () => {
+    const data = gatherForm();
+    try {
+      await updateDoc(doc(db, 'cards', CARD_ID), { ...data, updatedAt: serverTimestamp() });
+      const t = document.getElementById('toast');
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
+    } catch (e) {
+      alert('Could not save: ' + e.message);
     }
+  });
 
-    document.getElementById('name').value = data.name || '';
-    document.getElementById('title').value = data.title || '';
-    document.getElementById('bio').value = data.bio || '';
-    document.getElementById('location').value = data.location || '';
-    document.getElementById('email').value = data.email || '';
-    document.getElementById('phone').value = data.phone || '';
-    document.getElementById('whatsapp').value = data.whatsapp || '';
-    document.getElementById('telegram').value = data.telegram || '';
-    (data.socials || []).forEach(s => addSocial(s));
-    (data.work || []).forEach(w => addWork(w));
+  async function loadEditor(user) {
+    try {
+      const snap = await getDoc(doc(db, 'cards', CARD_ID));
+      if (!snap.exists()) { show('notfound-step'); return; }
+      const data = snap.data();
+      if (data.ownerUid !== user.uid) { show('denied-step'); return; }
+      // Clear any previously rendered rows before filling.
+      document.getElementById('socials-list').innerHTML = '';
+      document.getElementById('work-list').innerHTML = '';
+      fillForm(data);
+      show('editor-step');
+    } catch (e) {
+      show('signin-step');
+      document.getElementById('signin-error').textContent = e.message;
+    }
   }
 
-  init();
+  if (NOT_CONFIGURED) {
+    show('setup-needed');
+  } else if (!CARD_ID) {
+    show('notfound-step');
+  } else {
+    onAuthStateChanged(auth, user => {
+      if (user) loadEditor(user);
+      else show('signin-step');
+    });
+  }
 </script>
 
 </body>
