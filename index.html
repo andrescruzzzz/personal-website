@@ -123,6 +123,47 @@
     }
     @media (max-width: 800px) { .scene { margin: 0 auto; max-width: 380px; height: 380px; } }
 
+    /* ── For Business ── */
+    .business { background: var(--cream); overflow: hidden; }
+    .biz-wrap { max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: 1.05fr 1fr; gap: 56px; align-items: center; }
+    .biz-text .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+    .biz-text h2 { font-size: clamp(32px, 4.8vw, 52px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.04; }
+    .biz-text p { margin-top: 22px; font-size: 18px; line-height: 1.6; color: #3a3a3c; max-width: 34ch; }
+    .biz-text p b { font-weight: 600; color: var(--text); }
+    .biz-text p i { font-style: italic; }
+    .biz-text .cta {
+      display: inline-block; margin-top: 30px; background: var(--ink); color: #fff; text-decoration: none;
+      font-size: 16px; font-weight: 600; padding: 15px 34px; border-radius: 980px; transition: transform .15s, opacity .15s;
+    }
+    .biz-text .cta:hover { transform: translateY(-2px); opacity: .92; }
+
+    .biz-cards { position: relative; height: 380px; }
+    .biz-card {
+      position: absolute; top: 50%; left: 50%; width: 330px; height: 208px; border-radius: 18px; padding: 24px;
+      color: #fff; box-shadow: 0 26px 46px rgba(30,35,15,0.24); display: flex; flex-direction: column; justify-content: space-between;
+      transition: transform .35s cubic-bezier(.34,1.4,.5,1);
+    }
+    .biz-card .nfc { align-self: flex-end; }
+    .biz-card .brand { display: flex; align-items: center; gap: 10px; font-size: 25px; font-weight: 700; letter-spacing: 0.5px; }
+    .biz-card .logo-mark {
+      width: 30px; height: 30px; border-radius: 7px; background: rgba(255,255,255,0.92); color: inherit;
+      display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800;
+    }
+    .card-spk { background: linear-gradient(135deg, #2160bd 0%, #134080 100%); transform: translate(-60%, -44%) rotate(-7deg); z-index: 1; }
+    .card-spk .logo-mark { color: #e2001a; }
+    .card-acme { background: linear-gradient(135deg, #3a3d34 0%, #1f2118 100%); transform: translate(-40%, -56%) rotate(6deg); z-index: 2; }
+    .card-acme .logo-mark { color: #3a3d34; }
+    .biz-cards:hover .card-spk { transform: translate(-66%, -44%) rotate(-9deg); }
+    .biz-cards:hover .card-acme { transform: translate(-34%, -56%) rotate(8deg); }
+    .biz-note { margin-top: 18px; font-size: 12.5px; color: var(--secondary); }
+
+    @media (max-width: 820px) {
+      .biz-wrap { grid-template-columns: 1fr; gap: 30px; text-align: center; }
+      .biz-text p { margin-left: auto; margin-right: auto; }
+      .biz-cards { height: 300px; order: -1; }
+      .biz-card { width: 280px; height: 176px; }
+    }
+
     /* ── Set Up ── */
     .setup { text-align: center; background: #fafafa; border-radius: 0; }
     .setup .inner { max-width: 640px; margin: 0 auto; }
@@ -147,6 +188,7 @@
     <div class="brand">Packet</div>
     <div class="links">
       <a class="about" href="#about">About</a>
+      <a class="about" href="#business">Business</a>
       <a href="#setup">Set Up</a>
       <a class="login" href="login.html">Log in</a>
     </div>
@@ -245,6 +287,29 @@
               <path d="M0 32 a37 37 0 0 1 37 -37"/>
             </g>
           </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── For Business ── -->
+  <section id="business" class="section business">
+    <div class="biz-wrap">
+      <div class="biz-text">
+        <div class="eyebrow">For Business</div>
+        <h2>Packet<br>for your team.</h2>
+        <p>Give every employee a <b>custom card</b> with your company's logo on the front. One tap shares their role, contact, and links — all <i>centrally managed</i> and always up to date.</p>
+        <a class="cta" href="mailto:hello@packetcards.com?subject=Packet%20for%20Business">Talk to us →</a>
+        <div class="biz-note">Sample cards shown — send your logo and we'll brand the front.</div>
+      </div>
+      <div class="biz-cards">
+        <div class="biz-card card-spk">
+          <svg class="nfc" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.9"><path d="M6 8a8 8 0 0 1 0 8"/><path d="M9.5 6.5a12 12 0 0 1 0 11"/><path d="M13 5a16 16 0 0 1 0 14"/></svg>
+          <div class="brand"><span class="logo-mark">B</span> SAMPLE&nbsp;BANK</div>
+        </div>
+        <div class="biz-card card-acme">
+          <svg class="nfc" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.9"><path d="M6 8a8 8 0 0 1 0 8"/><path d="M9.5 6.5a12 12 0 0 1 0 11"/><path d="M13 5a16 16 0 0 1 0 14"/></svg>
+          <div class="brand"><span class="logo-mark">A</span> ACME&nbsp;CO</div>
         </div>
       </div>
     </div>
