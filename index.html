@@ -72,35 +72,10 @@
       background: radial-gradient(circle, rgba(0,113,227,0.12), rgba(0,194,255,0.05) 38%, transparent 70%);
     }
     .hero-content { position: relative; z-index: 2; }
-    .wordmark-wrap { position: relative; display: inline-block; font-size: clamp(72px, 16vw, 184px); line-height: 0.9; }
     .wordmark {
-      font-weight: 700; letter-spacing: -0.05em; line-height: 0.9; position: relative; z-index: 2;
+      font-size: clamp(72px, 16vw, 184px); font-weight: 700; letter-spacing: -0.05em; line-height: 0.9;
       background: linear-gradient(180deg, #0b0b0c 0%, #3a3a3c 100%);
       -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-    }
-
-    /* brushed-silver helpers */
-    .silver {
-      background: linear-gradient(135deg, #fafafa 0%, #c4c4c9 40%, #eef0f2 56%, #aeaeb4 100%);
-      box-shadow: 0 0.045em 0.13em rgba(0,0,0,0.22), inset 0 0 0 0.012em rgba(255,255,255,0.65);
-    }
-
-    /* realistic silver card enclosing the "c" */
-    .c-card {
-      position: absolute; z-index: 1; left: 45.7%; top: 57%; transform: translate(-50%, -50%);
-      width: 0.66em; height: 0.74em; overflow: visible;
-    }
-
-    /* small realistic 3D packet shooting up out of the wordmark toward the "t" */
-    .fly-card {
-      position: absolute; z-index: 3; left: 60%; top: -0.34em;
-      width: 1.06em; height: 0.78em; overflow: visible;
-      animation: fly 4.4s ease-in-out infinite; will-change: transform;
-    }
-    @keyframes fly {
-      0%   { transform: translate(0, 0.03em) rotate(0deg); }
-      50%  { transform: translate(0.1em, -0.12em) rotate(3deg); }
-      100% { transform: translate(0, 0.03em) rotate(0deg); }
     }
     .hero .sub { margin-top: 22px; font-size: clamp(17px, 2.4vw, 22px); color: var(--secondary); font-style: italic; font-weight: 300; }
     .hero .scroll-hint { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); color: var(--divider); font-size: 24px; animation: bob 1.8s ease-in-out infinite; z-index: 2; }
@@ -176,73 +151,7 @@
       </svg>
     </div>
     <div class="hero-content">
-      <div class="wordmark-wrap">
-        <div class="wordmark">Packet</div>
-        <svg class="c-card" viewBox="0 0 120 134" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <defs>
-            <linearGradient id="cMetal" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#ffffff"/><stop offset="0.18" stop-color="#d4d6db"/>
-              <stop offset="0.36" stop-color="#abadb4"/><stop offset="0.5" stop-color="#edeff2"/>
-              <stop offset="0.64" stop-color="#b9bbc1"/><stop offset="0.82" stop-color="#d8dade"/>
-              <stop offset="1" stop-color="#9a9ca2"/>
-            </linearGradient>
-            <linearGradient id="chipG" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#f4e4a8"/><stop offset="0.5" stop-color="#d8b65c"/><stop offset="1" stop-color="#a9842f"/>
-            </linearGradient>
-            <clipPath id="cClip"><rect x="5" y="5" width="110" height="124" rx="16"/></clipPath>
-            <filter id="cShadow" x="-30%" y="-30%" width="160%" height="160%">
-              <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.26"/>
-            </filter>
-          </defs>
-          <g filter="url(#cShadow)">
-            <rect x="5" y="5" width="110" height="124" rx="16" fill="url(#cMetal)"/>
-            <g clip-path="url(#cClip)">
-              <path d="M22 5 L50 5 L2 129 L-26 129 Z" fill="#ffffff" opacity="0.4"/>
-              <path d="M74 5 L88 5 L40 129 L26 129 Z" fill="#ffffff" opacity="0.18"/>
-            </g>
-            <rect x="5.8" y="5.8" width="108.4" height="122.4" rx="15.3" fill="none" stroke="#ffffff" stroke-opacity="0.65" stroke-width="1.2"/>
-            <rect x="5" y="5" width="110" height="124" rx="16" fill="none" stroke="#7e8086" stroke-opacity="0.35" stroke-width="1"/>
-            <g transform="translate(17 15)">
-              <rect width="25" height="19" rx="4" fill="url(#chipG)" stroke="#977f33" stroke-width="0.6"/>
-              <path d="M0 9.5 H25 M12.5 0 V19" stroke="#8a7128" stroke-width="0.7" opacity="0.55"/>
-              <rect x="8" y="5.5" width="9" height="8" rx="1.5" fill="none" stroke="#8a7128" stroke-width="0.7" opacity="0.55"/>
-            </g>
-          </g>
-        </svg>
-        <svg class="fly-card" viewBox="0 0 150 110" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <defs>
-            <linearGradient id="fMetal" x1="0.1" y1="0" x2="0.9" y2="1">
-              <stop offset="0" stop-color="#ffffff"/><stop offset="0.2" stop-color="#d4d6db"/>
-              <stop offset="0.4" stop-color="#a9abb2"/><stop offset="0.54" stop-color="#eef0f3"/>
-              <stop offset="0.7" stop-color="#bbbdc3"/><stop offset="1" stop-color="#96989e"/>
-            </linearGradient>
-            <linearGradient id="fChip" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#f4e4a8"/><stop offset="1" stop-color="#b58f34"/>
-            </linearGradient>
-            <filter id="fShadow" x="-40%" y="-40%" width="180%" height="180%">
-              <feDropShadow dx="0" dy="4" stdDeviation="4.5" flood-color="#000" flood-opacity="0.26"/>
-            </filter>
-          </defs>
-          <!-- speed streaks trailing behind -->
-          <g stroke="#a7abb3" stroke-width="3.4" stroke-linecap="round" opacity="0.65">
-            <line x1="4" y1="62" x2="30" y2="56"/>
-            <line x1="9" y1="73" x2="33" y2="67"/>
-            <line x1="18" y1="83" x2="38" y2="78"/>
-          </g>
-          <g filter="url(#fShadow)">
-            <!-- card thickness (offset edge) -->
-            <path d="M50 58 L108 36 L132 60 L74 82 Z" fill="#83858c"/>
-            <!-- top face -->
-            <path d="M48 52 L106 30 L130 54 L72 76 Z" fill="url(#fMetal)"/>
-            <!-- glossy sheen across the face -->
-            <path d="M70 41 L86 35 L60 64 L48 62 Z" fill="#ffffff" opacity="0.3"/>
-            <!-- bevel highlight on the top edge -->
-            <path d="M48 52 L106 30" fill="none" stroke="#ffffff" stroke-opacity="0.7" stroke-width="1.3"/>
-            <!-- chip -->
-            <path d="M60 52 L74 47 L80 54 L66 59 Z" fill="url(#fChip)"/>
-          </g>
-        </svg>
-      </div>
+      <div class="wordmark">Packet</div>
       <div class="sub">Skip the paper cards. Just <b style="font-style:normal;font-weight:600;color:#1d1d1f">tap.</b></div>
     </div>
     <div class="scroll-hint">⌄</div>
@@ -366,33 +275,36 @@
       packetsG.appendChild(hl);
 
       packets.push({ path, len: path.getTotalLength(), p, hl, size,
-        offset: Math.random(), speed: rnd(0.6, 1.7) * (Math.random() < 0.5 ? 1 : -1) });
+        offset: Math.random(), speed: rnd(0.6, 1.7) * (Math.random() < 0.5 ? 1 : -1),
+        phase: rnd(0, 6.283), hf: rnd(0.3, 0.7), amp: rnd(3, 7) });
     }
 
-    // motion is tied to scroll position; packets sit still when you don't scroll
-    let target = 0, prog = 0, raf = null;
-    function frame() {
+    // Scroll drives travel along the arcs; a gentle idle hover keeps them alive
+    // even when the user isn't scrolling.
+    let target = 0, prog = 0;
+    function frame(ts) {
       prog += (target - prog) * 0.12;
+      const t = ts / 1000;
       for (const k of packets) {
-        let t = (k.offset + prog * k.speed) % 1; if (t < 0) t += 1;
-        const pt = k.path.getPointAtLength(t * k.len);
-        const depth = pt.y / H;                 // 0 = far/back, 1 = near/front
+        let u = (k.offset + prog * k.speed) % 1; if (u < 0) u += 1;
+        const pt = k.path.getPointAtLength(u * k.len);
+        const hx = Math.sin(t * k.hf + k.phase) * k.amp;            // subtle hover
+        const hy = Math.cos(t * k.hf * 0.85 + k.phase) * k.amp;
+        const x = pt.x + hx, y = pt.y + hy;
+        const depth = y / H;                    // 0 = far/back, 1 = near/front
         const sc = (0.65 + depth * 0.65).toFixed(3);
         const op = (0.3 + depth * 0.65).toFixed(2);
-        k.p.setAttribute('transform', `translate(${pt.x - k.size / 2} ${pt.y - k.size * 0.34}) scale(${sc})`);
+        k.p.setAttribute('transform', `translate(${x - k.size / 2} ${y - k.size * 0.34}) scale(${sc})`);
         k.p.setAttribute('opacity', op);
-        k.hl.setAttribute('transform', `translate(${pt.x - k.size * 0.25} ${pt.y - k.size * 0.28}) scale(${sc})`);
+        k.hl.setAttribute('transform', `translate(${x - k.size * 0.25} ${y - k.size * 0.28}) scale(${sc})`);
         k.hl.setAttribute('opacity', (op * 0.55).toFixed(2));
       }
-      if (Math.abs(target - prog) > 0.0002) raf = requestAnimationFrame(frame);
-      else raf = null;
+      requestAnimationFrame(frame);
     }
-    function onScroll() {
+    window.addEventListener('scroll', () => {
       target = window.scrollY / Math.max(1, window.innerHeight * 1.1);
-      if (!raf) raf = requestAnimationFrame(frame);
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    frame();   // initial static placement
+    }, { passive: true });
+    requestAnimationFrame(frame);
   </script>
 
 </body>
