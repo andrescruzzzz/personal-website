@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personal Work — Andres Cruz</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="work-page">
+
+  <header class="site-header">
+    <button class="menu-toggle" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <nav>
+      <ul>
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#experience">Experience</a></li>
+        <li><a href="index.html#work">Work</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="ws-outer" id="wsOuter">
+    <div class="ws-scene" id="wsScene">
+
+      <a class="ws-back" href="index.html#work">← Work</a>
+
+      <div class="ws-vertical-label">P E R S O N A L</div>
+
+      <div class="ws-counter">
+        <span class="ws-counter-current" id="wsCounterCurrent">01</span>
+        / <span id="wsCounterTotal">10</span>
+      </div>
+
+      <div class="ws-progress" id="wsProgress"></div>
+
+      <div class="ws-scroll-hint" id="wsScrollHint">Scroll</div>
+
+      <div class="ws-slides" id="wsSlides">
+
+        <div class="ws-slide" data-index="0">
+          <div class="ws-caption-overlay"></div>
+          <video autoplay muted loop playsinline preload="auto">
+            <source src="assets/personal/compilation.mp4" type="video/mp4" />
+          </video>
+          <div class="ws-caption">
+            <div class="ws-caption-label">Compilation</div>
+          </div>
+        </div>
+
+        <div class="ws-slide" data-index="1">
+          <div class="ws-caption-overlay"></div>
+          <video muted loop playsinline preload="none">
+            <source src="assets/personal/aw-asen-falls.mp4" type="video/mp4" />
+          </video>
+          <div class="ws-caption">
+            <div class="ws-caption-label">Aw-Asen Falls</div>
+            <div class="ws-caption-meta">April 2026</div>
+          </div>
+        </div>
+
+        <div class="ws-slide" data-index="2">
+          <div class="ws-caption-overlay"></div>
+          <video muted loop playsinline preload="none">
+            <source src="assets/personal/la-union-and-aw-asen-falls.mp4" type="video/mp4" />
+          </video>
+          <div class="ws-caption">
+            <div class="ws-caption-label">La Union &amp; Aw-Asen Falls</div>
+            <div class="ws-caption-meta">April 2026</div>
+          </div>
+        </div>
+
+        <div class="ws-slide" data-index="3">
+          <div class="ws-caption-overlay"></div>
+          <video muted loop playsinline preload="none">
+            <source src="assets/personal/baler-with-blockmates.mp4" type="video/mp4" />
+          </video>
+          <div class="ws-caption">
+            <div class="ws-caption-label">Baler with Blockmates</div>
+            <div class="ws-caption-meta">May 2026</div>
+          </div>
+        </div>
+
+        <div class="ws-slide" data-index="4">
+          <div class="ws-caption-overlay"></div>
+          <video muted loop playsinline preload="none">
+            <source src="assets/personal/portales-beach-dish-washing.mp4" type="video/mp4" />
+          </video>
+          <div class="ws-caption">
+            <div class="ws-caption-label">Portales Beach Dish Washing</div>
+            <div class="ws-caption-meta">May 2026</div>
+          </div>
+        </div>
+
+        <div class="ws-slide" data-index="5">
+          <div class="ws-caption-overlay"></div>
+          <video muted loop playsinline preload="none">
+            <source src="assets/personal/switzerland-mountainside-road.mp4" type="video/mp4" />
+          </video>
+          <div class="ws-caption">
+            <div class="ws-caption-label">Switzerland Mountainside Road</div>
+            <div class="ws-caption-meta">January 2026</div>
+          </div>
+        </div>
+
+        <div class="ws-slide" data-index="6">
+          <div class="ws-caption-overlay"></div>
+          <video muted loop playsinline preload="none">
+            <source src="assets/personal/munich-winter.mp4" type="video/mp4" />
+          </video>
+          <div class="ws-caption">
+            <div class="ws-caption-label">Munich Winter</div>
+            <div class="ws-caption-meta">December 2025</div>
+          </div>
+        </div>
+
+        <div class="ws-slide" data-index="7">
+          <div class="ws-caption-overlay"></div>
+          <video muted loop playsinline preload="none">
+            <source src="assets/personal/salzburg-cathedral.mp4" type="video/mp4" />
+          </video>
+          <div class="ws-caption">
+            <div class="ws-caption-label">Salzburg Cathedral</div>
+            <div class="ws-caption-meta">December 2025</div>
+          </div>
+        </div>
+
+        <div class="ws-slide" data-index="8">
+          <div class="ws-caption-overlay"></div>
+          <video muted loop playsinline preload="none">
+            <source src="assets/personal/vienna.mov" type="video/quicktime" />
+          </video>
+          <div class="ws-caption">
+            <div class="ws-caption-label">Vienna</div>
+            <div class="ws-caption-meta">April 2025</div>
+          </div>
+        </div>
+
+        <div class="ws-slide" data-index="9">
+          <div class="ws-caption-overlay"></div>
+          <video muted loop playsinline preload="none">
+            <source src="assets/personal/ben-shelton-bmw-open-munich.mov" type="video/quicktime" />
+          </video>
+          <div class="ws-caption">
+            <div class="ws-caption-label">Ben Shelton, BMW Open Munich</div>
+            <div class="ws-caption-meta">April 2025</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script src="work-scroll.js"></script>
+</body>
+</html>

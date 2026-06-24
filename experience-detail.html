@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Experience — Andres Cruz</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <button class="menu-toggle" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <nav>
+      <ul>
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#experience">Experience</a></li>
+        <li><a href="index.html#work">Work</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="detail-main">
+    <a class="back-link" href="index.html#experience">&larr; Back to Experience</a>
+    <h2 class="page-title" id="role-title">Role</h2>
+    <div class="detail-meta" id="role-meta">Company · Year</div>
+    <div id="role-desc"><p>Description loading…</p></div>
+
+    <div class="image-placeholder-grid">
+      <div class="image-placeholder">Photo placeholder</div>
+      <div class="image-placeholder">Photo placeholder</div>
+      <div class="image-placeholder">Photo placeholder</div>
+    </div>
+  </main>
+
+  <script>
+    const data = {
+      duchess: {
+        role: 'Director of Content',
+        meta: 'Duchess · Visual storytelling for the modern golfer',
+        desc: [
+          'I work with Duchess Clothing to produce dynamic marketing content that defines their brand. From shooting on the course to the final edit, I handle video production and photography designed to capture the lifestyle and aesthetic of the sport.',
+          "This freelance role has been a fantastic outlet for developing my skills in digital marketing and brand development. It's given me a holistic view of how media and product positioning work together to build a loyal audience."
+        ]
+      },
+      mango: {
+        role: 'Sales and Marketing Representative',
+        meta: 'Philippine Mango Seedling Farm Corporation',
+        desc: [
+          'I currently serve as a Sales and Marketing Representative for our family-owned seedling business. My role focuses on connecting with farmers and agricultural clients to distribute high-quality Philippine Mango seedlings.',
+          "This experience has sharpened my communication and negotiation skills, teaching me how to tailor marketing strategies to different types of customers. It's been a rewarding experience contributing to the operational side of a business I grew up around."
+        ]
+      },
+      denso: {
+        role: 'Automation Engineer (Intern)',
+        meta: 'DENSO Philippines Corporation · January–April 2026',
+        desc: ['Directed the development and successful completion of an AGV polisher project for factory operations, gaining hands-on experience in control systems, wiring, and automation logic.']
+      },
+      eperformax: {
+        role: 'Information Technology Team Member (Intern)',
+        meta: 'ePerformax Contact Centers & BPO · May–August 2024',
+        desc: ['Worked with web, mobile, automation, and database tools, helping identify areas of interest in IT and strengthening technical adaptability through hands-on projects.']
+      },
+      toka: {
+        role: 'Junior Sommelier (Intern)',
+        meta: 'Toka Wine · February–April 2024',
+        desc: ['Developed knowledge of wine, service operations, and cultural aspects of the food and beverage industry through daily customer interactions, improving my communication skills.']
+      }
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    const entry = data[id];
+
+    if (entry) {
+      document.getElementById('role-title').textContent = entry.role;
+      document.getElementById('role-meta').textContent = entry.meta;
+      const descEl = document.getElementById('role-desc');
+      descEl.innerHTML = '';
+      entry.desc.forEach((paragraph) => {
+        const p = document.createElement('p');
+        p.textContent = paragraph;
+        descEl.appendChild(p);
+      });
+    }
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>

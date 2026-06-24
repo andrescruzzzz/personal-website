@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mappd</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- Particle Canvas Background -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- Auth / Sign-in Overlay -->
+<div id="auth-overlay" class="overlay active">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <svg class="map-logo-lg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 14 L23 8 L41 14 L60 8 L60 50 L41 56 L23 50 L4 56 Z" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M23 8 L23 50 M41 14 L41 56" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-dasharray="3 4"/>
+        <circle cx="41" cy="30" r="4.5" fill="currentColor"/>
+      </svg>
+      <h1 class="welcome-title">Mappd</h1>
+      <p class="welcome-sub">The world's travel network</p>
+    </div>
+    <div class="auth-body">
+      <button class="google-btn" onclick="signInWithGoogle()">
+        <svg class="g-logo" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+        Continue with Google
+      </button>
+      <div class="auth-divider"><span>or</span></div>
+      <div class="auth-field">
+        <input type="email" id="auth-email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <button class="btn-primary auth-continue" onclick="continueWithEmail()">Continue with email</button>
+      <p class="auth-error hidden" id="auth-error"></p>
+    </div>
+    <p class="auth-legal">By continuing, you agree to our <a href="#" onclick="return false">Terms</a> &amp; <a href="#" onclick="return false">Privacy Policy</a>.</p>
+    <p class="auth-demo-note">Demo build — sign-in is simulated and all data stays on this device.</p>
+  </div>
+</div>
+
+<!-- Google sign-in (simulated chooser) -->
+<div id="google-modal" class="modal hidden">
+  <div class="modal-content google-sheet">
+    <div class="google-head">
+      <svg class="g-logo sm" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+      </svg>
+      <span>Sign in with Google</span>
+    </div>
+    <p class="google-sub">to continue to Mappd</p>
+    <div class="google-field">
+      <label>Email or phone</label>
+      <input type="email" id="google-email" placeholder="yourname@gmail.com">
+    </div>
+    <p class="auth-error hidden" id="google-error"></p>
+    <div class="google-actions">
+      <button class="link-btn" onclick="closeGoogleModal()">Cancel</button>
+      <button class="btn-primary" onclick="googleSignInConfirm()">Next</button>
+    </div>
+  </div>
+</div>
+
+<!-- Onboarding Overlay -->
+<div id="onboarding-overlay" class="overlay">
+  <div class="onboarding-container">
+    <div class="onboarding-particles"></div>
+    <div class="onboarding-step active" data-step="0">
+      <div class="welcome-art">
+        <svg class="map-logo-lg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 14 L23 8 L41 14 L60 8 L60 50 L41 56 L23 50 L4 56 Z" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+          <path d="M23 8 L23 50 M41 14 L41 56" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-dasharray="3 4"/>
+          <circle cx="41" cy="30" r="4.5" fill="currentColor"/>
+        </svg>
+      </div>
+      <h1 class="welcome-title">Mappd</h1>
+      <p class="welcome-sub">Track every place you've been.</p>
+      <button class="btn-primary" onclick="nextStep()">Get Started</button>
+    </div>
+
+    <div class="onboarding-step" data-step="1">
+      <div class="step-indicator"><span class="step-num">01</span><span class="step-label">Identity</span></div>
+      <h2>What shall we call you, traveler?</h2>
+      <div class="input-group floating">
+        <input type="text" id="user-name" placeholder=" " required>
+        <label>Your Name</label>
+        <div class="input-line"></div>
+      </div>
+      <div class="input-group floating">
+        <input type="number" id="user-age" placeholder=" " min="1" max="120">
+        <label>Age</label>
+        <div class="input-line"></div>
+      </div>
+      <button class="btn-primary" onclick="nextStep()">Continue</button>
+    </div>
+
+    <div class="onboarding-step" data-step="2">
+      <div class="step-indicator"><span class="step-num">02</span><span class="step-label">Home</span></div>
+      <h2>Where do you call home?</h2>
+      <div class="input-group floating">
+        <select id="user-country">
+          <option value="">Select your country</option>
+        </select>
+        <div class="input-line"></div>
+      </div>
+      <button class="btn-primary" onclick="nextStep()">Continue</button>
+    </div>
+
+    <div class="onboarding-step" data-step="3">
+      <div class="step-indicator"><span class="step-num">03</span><span class="step-label">Journeys</span></div>
+      <h2>Where have your footsteps taken you?</h2>
+      <p class="step-hint">Select countries you've visited</p>
+      <div class="country-picker" id="country-picker"></div>
+      <button class="btn-primary" onclick="nextStep()">Continue</button>
+    </div>
+
+    <div class="onboarding-step" data-step="4">
+      <div class="step-indicator"><span class="step-num">04</span><span class="step-label">Ready</span></div>
+      <div class="ready-art">
+        <svg class="map-logo-lg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 14 L23 8 L41 14 L60 8 L60 50 L41 56 L23 50 L4 56 Z" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+          <path d="M23 8 L23 50 M41 14 L41 56" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-dasharray="3 4"/>
+          <circle cx="41" cy="30" r="4.5" fill="currentColor"/>
+        </svg>
+      </div>
+      <h2>You're all set, <span id="user-name-display"></span></h2>
+      <p class="welcome-sub">Your map is ready.</p>
+      <button class="btn-primary" onclick="finishOnboarding()">Open Map</button>
+    </div>
+  </div>
+</div>
+
+<!-- Main App -->
+<div id="app" class="hidden">
+  <!-- Navigation -->
+  <nav id="main-nav">
+    <div class="nav-brand">
+      <svg class="map-logo" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 14 L23 8 L41 14 L60 8 L60 50 L41 56 L23 50 L4 56 Z" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M23 8 L23 50 M41 14 L41 56" stroke="currentColor" stroke-width="3" stroke-linejoin="round" stroke-dasharray="3 5"/>
+        <circle cx="41" cy="30" r="5" fill="currentColor"/>
+      </svg>
+      <span class="brand-text">Mappd</span>
+    </div>
+    <div class="nav-links">
+      <button class="nav-link active" data-tab="map">
+        <span class="nav-icon">&#127758;</span> Map
+      </button>
+      <button class="nav-link" data-tab="feed">
+        <span class="nav-icon">&#128240;</span> Feed
+      </button>
+      <button class="nav-link" data-tab="friends">
+        <span class="nav-icon">&#128101;</span> Friends
+      </button>
+      <button class="nav-link" data-tab="wishlist">
+        <span class="nav-icon">&#10024;</span> Wishlist
+      </button>
+      <button class="nav-link" data-tab="upcoming">
+        <span class="nav-icon">&#9992;</span> Upcoming
+      </button>
+      <button class="nav-link" data-tab="rankings">
+        <span class="nav-icon">&#127942;</span> Rankings
+      </button>
+    </div>
+    <div class="nav-profile">
+      <div class="score-badge">
+        <span class="score-icon">&#11088;</span>
+        <span id="nav-score">0</span> pts
+      </div>
+      <div class="avatar" id="nav-avatar" onclick="toggleAccountMenu(event)">A</div>
+
+      <!-- Account dropdown -->
+      <div id="account-menu" class="account-menu hidden">
+        <div class="am-header">
+          <div class="avatar am-avatar" id="am-avatar">A</div>
+          <div class="am-id">
+            <div class="am-name" id="am-name"></div>
+            <div class="am-email" id="am-email"></div>
+          </div>
+        </div>
+        <div class="am-divider"></div>
+        <button class="am-item" onclick="openSettings('account')"><span class="am-ic">&#9881;</span> Account settings</button>
+        <button class="am-item" onclick="openSettings('privacy')"><span class="am-ic">&#128274;</span> Privacy &amp; safety</button>
+        <button class="am-item" onclick="openSettings('data')"><span class="am-ic">&#128202;</span> Your data</button>
+        <div class="am-divider"></div>
+        <button class="am-item am-logout" onclick="logout()"><span class="am-ic">&#8629;</span> Log out</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Map View -->
+  <section id="map-view" class="view active">
+    <div id="globe-container">
+      <canvas id="globe-canvas"></canvas>
+      <canvas id="cloud-canvas"></canvas>
+      <!-- Country hover tooltip -->
+      <div id="country-tooltip" class="tooltip hidden">
+        <span class="tooltip-name"></span>
+        <span class="tooltip-status"></span>
+      </div>
+    </div>
+
+    <button id="add-country-btn" onclick="openAddCountry()">
+      <span class="plus">+</span> Add Country
+    </button>
+
+    <div id="zoom-controls">
+      <button class="zoom-btn" onclick="globe && globe.zoomBy(1.25)">+</button>
+      <button class="zoom-btn" onclick="globe && globe.zoomBy(0.8)">&minus;</button>
+    </div>
+
+    <div id="map-stats">
+      <div class="stat-card glass">
+        <span class="stat-number" id="countries-visited">0</span>
+        <span class="stat-label">Countries</span>
+      </div>
+      <div class="stat-card glass">
+        <span class="stat-number" id="regions-visited">0</span>
+        <span class="stat-label">Regions</span>
+      </div>
+      <div class="stat-card glass">
+        <span class="stat-number" id="total-score">0</span>
+        <span class="stat-label">Travel Score</span>
+      </div>
+      <div class="stat-card glass">
+        <span class="stat-number" id="continents-count">0</span>
+        <span class="stat-label">Continents</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Country Detail View -->
+  <section id="country-detail" class="view hidden">
+    <button class="back-btn" onclick="closeCountryDetail()">
+      <span>&#8592;</span> Back to Map
+    </button>
+    <div class="country-hero">
+      <div class="country-hero-bg" id="country-hero-bg"></div>
+      <div class="country-hero-content">
+        <h1 id="detail-country-name"></h1>
+        <div class="country-meta">
+          <span id="detail-continent"></span>
+          <span class="meta-sep">&#8226;</span>
+          <span id="detail-capital"></span>
+        </div>
+        <div class="hero-badges">
+          <div class="country-score-badge" id="detail-score-badge">
+            <span class="score-val" id="detail-score"></span> country pts
+          </div>
+          <div class="country-score-badge region-badge">
+            <span class="score-val" id="detail-region-score">0</span> region pts
+          </div>
+          <button class="btn-secondary" id="detail-visit-toggle" onclick="toggleCountryVisited()"></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detail tabs -->
+    <div class="detail-tabs">
+      <button class="detail-tab active" data-dtab="regions" onclick="switchDetailTab('regions')">Regions</button>
+      <button class="detail-tab" data-dtab="memories" onclick="switchDetailTab('memories')">Memories</button>
+      <button class="detail-tab" data-dtab="ranking" onclick="switchDetailTab('ranking')">Ranking</button>
+      <button class="detail-tab" data-dtab="explore" onclick="switchDetailTab('explore')">Explore</button>
+    </div>
+
+    <!-- Regions tab (landing) -->
+    <div id="dtab-regions" class="detail-content dtab-panel">
+      <div class="region-map-wrap">
+        <canvas id="region-map-canvas"></canvas>
+        <div class="region-zoom-tag">
+          <button class="zbtn" onclick="regionMap && regionMap.zoomButton(1.4)">+</button>
+          <button class="zbtn" onclick="regionMap && regionMap.zoomButton(1/1.4)">&minus;</button>
+        </div>
+        <div class="region-map-hint" id="region-hint">Click a region to log it &bull; scroll to zoom, drag to pan</div>
+      </div>
+      <div class="region-legend">
+        <span class="leg"><i class="dot dot-visited"></i> Visited</span>
+        <span class="leg"><i class="dot dot-remote"></i> Hidden gem +55</span>
+        <span class="leg"><i class="dot dot-standard"></i> Standard +35</span>
+        <span class="leg"><i class="dot dot-famous"></i> Capital / Popular +25</span>
+      </div>
+      <div class="region-checklist" id="region-checklist"></div>
+    </div>
+
+    <!-- Memories tab -->
+    <div id="dtab-memories" class="detail-content dtab-panel hidden">
+      <div class="section-header">
+        <h2>Your Memories</h2>
+        <button class="btn-secondary" onclick="openPhotoUpload()">+ Add Photos</button>
+      </div>
+      <div class="photo-grid" id="photo-grid"></div>
+    </div>
+
+    <!-- Ranking tab -->
+    <div id="dtab-ranking" class="detail-content dtab-panel hidden">
+      <div class="section-header"><h2>Your Ranking</h2></div>
+      <div class="ranking-section" id="country-ranking"></div>
+    </div>
+
+    <!-- Explore tab -->
+    <div id="dtab-explore" class="detail-content dtab-panel hidden">
+      <div class="explore-tabs">
+        <button class="explore-tab active" onclick="switchExploreTab('see')">Things to See</button>
+        <button class="explore-tab" onclick="switchExploreTab('expect')">What to Expect</button>
+        <button class="explore-tab" onclick="switchExploreTab('food')">Food</button>
+        <button class="explore-tab" onclick="switchExploreTab('hotels')">Hotels</button>
+        <button class="explore-tab" onclick="switchExploreTab('flights')">Flights</button>
+      </div>
+      <div class="explore-content" id="explore-content"></div>
+      <button class="btn-primary" onclick="addToWishlist(currentCountry)">
+        &#10024; Add to Wishlist
+      </button>
+    </div>
+  </section>
+
+  <!-- Feed View -->
+  <section id="feed-view" class="view hidden">
+    <div class="view-header">
+      <h1>Social Feed</h1>
+      <p class="view-sub">Adventures from you and your friends</p>
+    </div>
+    <div class="feed-list" id="feed-list"></div>
+  </section>
+
+  <!-- Friends View -->
+  <section id="friends-view" class="view hidden">
+    <div class="view-header">
+      <h1>Friends</h1>
+      <p class="view-sub">See where your friends have been</p>
+    </div>
+    <div class="friends-list" id="friends-list"></div>
+    <div id="friend-map-container" class="hidden">
+      <button class="back-btn" onclick="closeFriendMap()">
+        <span>&#8592;</span> Back to Friends
+      </button>
+      <div class="friend-map-header" id="friend-map-header"></div>
+      <canvas id="friend-globe-canvas"></canvas>
+      <canvas id="friend-cloud-canvas"></canvas>
+    </div>
+  </section>
+
+  <!-- Wishlist View -->
+  <section id="wishlist-view" class="view hidden">
+    <div class="view-header">
+      <h1>Travel Wishlist</h1>
+      <p class="view-sub">Dreams waiting to become memories</p>
+    </div>
+    <div class="wishlist-grid" id="wishlist-grid"></div>
+    <div class="add-wishlist-section">
+      <select id="wishlist-select" class="styled-select">
+        <option value="">Add a country to your wishlist...</option>
+      </select>
+      <button class="btn-primary" onclick="addWishlistFromSelect()">+ Add</button>
+    </div>
+  </section>
+
+  <!-- Upcoming Travels View -->
+  <section id="upcoming-view" class="view hidden">
+    <div class="view-header">
+      <h1>Upcoming Adventures</h1>
+      <p class="view-sub">The countdown to your next escape</p>
+    </div>
+    <div class="upcoming-list" id="upcoming-list"></div>
+    <div class="add-upcoming-section glass">
+      <h3>Plan a New Trip</h3>
+      <div class="upcoming-form">
+        <select id="upcoming-country" class="styled-select">
+          <option value="">Select destination...</option>
+        </select>
+        <input type="date" id="upcoming-date" class="styled-input">
+        <input type="text" id="upcoming-notes" placeholder="Notes..." class="styled-input">
+        <button class="btn-primary" onclick="addUpcomingTrip()">Add Trip</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rankings View -->
+  <section id="rankings-view" class="view hidden">
+    <div class="view-header">
+      <h1>Your Country Rankings</h1>
+      <p class="view-sub">Rate and rank the places you've explored</p>
+    </div>
+    <div class="rankings-list" id="rankings-list"></div>
+  </section>
+
+  <!-- Photo Upload Modal -->
+  <div id="photo-modal" class="modal hidden">
+    <div class="modal-content glass">
+      <button class="modal-close" onclick="closePhotoUpload()">&times;</button>
+      <h2>Add Memories</h2>
+      <div class="upload-zone" id="upload-zone">
+        <div class="upload-icon">&#128247;</div>
+        <p>Drag photos here or click to upload</p>
+        <input type="file" id="photo-input" multiple accept="image/*" style="display:none">
+      </div>
+      <div class="upload-preview" id="upload-preview"></div>
+      <button class="btn-primary" onclick="savePhotos()">Save Memories</button>
+    </div>
+  </div>
+
+  <!-- Add Country Modal -->
+  <div id="add-country-modal" class="modal hidden">
+    <div class="modal-content glass">
+      <button class="modal-close" onclick="closeAddCountry()">&times;</button>
+      <h2>Add a Country</h2>
+      <p class="modal-sub">Mark a new country as visited. It posts to your feed.</p>
+      <input type="text" id="add-country-search" class="styled-input" placeholder="Search countries..." style="width:100%;margin-bottom:14px">
+      <div class="add-country-list" id="add-country-list"></div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settings-modal" class="modal hidden">
+    <div class="modal-content settings-content glass">
+      <button class="modal-close" onclick="closeSettings()">&times;</button>
+      <h2>Settings</h2>
+      <div class="settings-tabs">
+        <button class="settings-tab active" data-stab="account" onclick="switchSettingsTab('account')">Account</button>
+        <button class="settings-tab" data-stab="privacy" onclick="switchSettingsTab('privacy')">Privacy</button>
+        <button class="settings-tab" data-stab="data" onclick="switchSettingsTab('data')">Data &amp; Safety</button>
+      </div>
+      <div id="stab-account" class="settings-panel"></div>
+      <div id="stab-privacy" class="settings-panel hidden"></div>
+      <div id="stab-data" class="settings-panel hidden"></div>
+    </div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="worlddata.js"></script>
+<script src="regiondata.js"></script>
+<script src="globe.js"></script>
+<script src="regionmap.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
