@@ -3,445 +3,256 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Andres Cruz</title>
+  <title>Packet — your card, one tap away</title>
+
+  <!-- A tapped NFC card opens packetcards.com?id=xxx — route that to the card view. -->
+  <script>
+    (function () {
+      var id = new URLSearchParams(location.search).get('id');
+      if (id) location.replace('card.html?id=' + encodeURIComponent(id));
+    })();
+  </script>
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --bg: #ffffff;
-      --surface: #ffffff;
       --text: #1d1d1f;
       --secondary: #86868b;
-      --divider: #d2d2d7;
-      --hover: #f5f5f7;
+      --divider: #e4e4e7;
       --accent: #0071e3;
-      --radius: 16px;
+      --ink: #0a0a0a;
     }
 
-    html, body {
-      min-height: 100%;
+    html { scroll-behavior: smooth; }
+    body {
       background: var(--bg);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
     }
 
-    body {
-      display: flex;
-      justify-content: center;
-      padding: 60px 20px 100px;
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 28px;
+      backdrop-filter: saturate(180%) blur(20px);
+      background: rgba(255,255,255,0.72);
+      border-bottom: 0.5px solid var(--divider);
     }
+    nav .brand { font-size: 20px; font-weight: 700; letter-spacing: -0.4px; }
+    nav .links { display: flex; gap: 28px; align-items: center; }
+    nav .links a { text-decoration: none; color: var(--text); font-size: 15px; font-weight: 400; transition: opacity 0.15s; }
+    nav .links a:hover { opacity: 0.55; }
+    nav .links a.login { font-weight: 600; }
+    @media (max-width: 560px) { nav .links { gap: 18px; } nav .links a.about { display: none; } }
 
-    .card {
-      width: 100%;
-      max-width: 400px;
-    }
+    section { padding: 120px 28px; }
 
     /* ── Hero ── */
     .hero {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      padding: 0 0 40px;
+      min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: relative; text-align: center; padding-top: 80px; overflow: hidden;
     }
-
-    .avatar {
-      width: 88px;
-      height: 88px;
-      border-radius: 50%;
-      background: #f5f5f7;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      font-weight: 600;
-      color: var(--secondary);
-      letter-spacing: -0.5px;
-      margin-bottom: 20px;
+    .hero .stage {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      perspective: 900px; pointer-events: none;
     }
-
-    .name {
-      font-size: 28px;
-      font-weight: 600;
-      letter-spacing: -0.5px;
-      line-height: 1.15;
-      color: var(--text);
+    .hero .plane {
+      width: 1100px; max-width: 150vw; height: 620px;
+      transform: rotateX(62deg) rotateZ(0deg); transform-style: preserve-3d;
+      opacity: 0.9;
     }
-
-    .title {
-      font-size: 15px;
-      color: var(--secondary);
-      font-weight: 400;
-      margin-top: 4px;
-      letter-spacing: -0.1px;
+    .hero-content { position: relative; z-index: 2; }
+    .wordmark {
+      font-size: clamp(72px, 16vw, 184px); font-weight: 700; letter-spacing: -0.05em; line-height: 0.9;
+      background: linear-gradient(180deg, #111 0%, #444 100%);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
     }
+    .hero .sub { margin-top: 22px; font-size: clamp(17px, 2.4vw, 22px); color: var(--secondary); font-style: italic; font-weight: 300; }
+    .hero .scroll-hint { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); color: var(--divider); font-size: 24px; animation: bob 1.8s ease-in-out infinite; z-index: 2; }
+    @keyframes bob { 0%,100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 8px); } }
 
-    .tagline {
-      font-size: 14px;
-      color: var(--secondary);
-      line-height: 1.5;
-      margin-top: 12px;
-      max-width: 280px;
+    .packet { fill: var(--accent); }
+    .map-dot { fill: #d8d8dc; }
+    .arc { fill: none; stroke: #e9e9ec; stroke-width: 1; }
+
+    /* ── About ── */
+    .about { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; max-width: 1100px; margin: 0 auto; }
+    .about .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+    .about h2 { font-size: clamp(30px, 4.5vw, 46px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.08; }
+    .about p { margin-top: 22px; font-size: 18px; line-height: 1.6; color: #3a3a3c; max-width: 30ch; }
+    .about p b { font-weight: 600; color: var(--text); }
+    .about p i { font-style: italic; }
+    @media (max-width: 800px) { .about { grid-template-columns: 1fr; gap: 40px; text-align: center; } .about p { margin-left: auto; margin-right: auto; } .tap-illo { order: -1; } }
+
+    .tap-illo { width: 100%; display: flex; justify-content: center; }
+
+    /* ── Set Up ── */
+    .setup { text-align: center; background: #fafafa; border-radius: 0; }
+    .setup .inner { max-width: 640px; margin: 0 auto; }
+    .setup .lead { font-size: clamp(28px, 5vw, 44px); font-weight: 700; letter-spacing: -0.03em; }
+    .setup .lead i { font-style: italic; font-weight: 400; color: var(--secondary); }
+    .setup p { margin-top: 16px; font-size: 17px; color: var(--secondary); }
+    .setup .cta {
+      display: inline-block; margin-top: 34px; background: var(--ink); color: #fff; text-decoration: none;
+      font-size: 17px; font-weight: 600; padding: 16px 38px; border-radius: 980px; transition: transform 0.15s, opacity 0.15s;
     }
+    .setup .cta:hover { transform: translateY(-2px); opacity: 0.92; }
+    .setup .small { margin-top: 18px; font-size: 14px; }
+    .setup .small a { color: var(--accent); text-decoration: none; }
 
-    .location {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 13px;
-      color: var(--secondary);
-      margin-top: 10px;
-    }
-
-    .location svg {
-      width: 12px;
-      height: 12px;
-      opacity: 0.6;
-    }
-
-    /* ── Sections ── */
-    .section {
-      padding-top: 8px;
-    }
-
-    .section-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      color: var(--secondary);
-      padding: 0 0 12px;
-    }
-
-    .divider {
-      height: 1px;
-      background: var(--divider);
-      opacity: 0.6;
-      margin: 0 0 20px;
-    }
-
-    /* ── Link rows ── */
-    .link-list {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 32px;
-    }
-
-    .link-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 14px 4px;
-      text-decoration: none;
-      color: var(--text);
-      border-bottom: 0.5px solid rgba(210, 210, 215, 0.5);
-      transition: background 0.15s;
-    }
-
-    .link-item:last-child {
-      border-bottom: none;
-    }
-
-    .link-item:hover {
-      background: var(--hover);
-      border-radius: 10px;
-      margin: 0 -8px;
-      padding: 14px 12px;
-    }
-
-    .link-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .link-text {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .link-text .primary {
-      font-size: 15px;
-      font-weight: 500;
-      letter-spacing: -0.1px;
-    }
-
-    .link-text .secondary {
-      font-size: 12px;
-      color: var(--secondary);
-      margin-top: 1px;
-    }
-
-    .link-arrow {
-      color: var(--divider);
-      font-size: 16px;
-      font-weight: 300;
-    }
-
-    /* ── Contact buttons ── */
-    .contact-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 40px;
-    }
-
-    .contact-btn {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      padding: 16px 8px;
-      background: #f5f5f7;
-      border-radius: 14px;
-      text-decoration: none;
-      color: var(--text);
-      transition: background 0.15s, transform 0.1s;
-    }
-
-    .contact-btn:hover {
-      background: #ebebed;
-      transform: scale(0.98);
-    }
-
-    .contact-btn:active {
-      transform: scale(0.96);
-    }
-
-    .contact-btn .btn-icon {
-      font-size: 20px;
-    }
-
-    .contact-btn .btn-label {
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: -0.1px;
-    }
-
-    .hidden { display: none !important; }
-
-    /* ── Footer ── */
-    .footer {
-      text-align: center;
-      font-size: 11px;
-      color: var(--divider);
-      letter-spacing: 0.3px;
-    }
-
-    /* ── Edit FAB ── */
-    .edit-fab {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      width: 44px;
-      height: 44px;
-      background: var(--text);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-      transition: transform 0.15s;
-      z-index: 50;
-    }
-
-    .edit-fab:hover { transform: scale(1.08); }
-    .edit-fab:active { transform: scale(0.95); }
-
-    /* ── State (loading / message) ── */
-    .state {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-
-    .state-inner {
-      text-align: center;
-      max-width: 320px;
-    }
-
-    .state-inner h2 {
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: -0.3px;
-      margin-bottom: 8px;
-    }
-
-    .state-inner p {
-      font-size: 14px;
-      color: var(--secondary);
-      line-height: 1.5;
-      margin-bottom: 20px;
-    }
-
-    .state-inner .btn {
-      display: inline-block;
-      background: var(--accent);
-      color: white;
-      text-decoration: none;
-      font-size: 15px;
-      font-weight: 600;
-      padding: 12px 28px;
-      border-radius: 24px;
-    }
-
-    .spinner {
-      width: 28px;
-      height: 28px;
-      border: 3px solid var(--divider);
-      border-top-color: var(--secondary);
-      border-radius: 50%;
-      margin: 0 auto;
-      animation: spin 0.7s linear infinite;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .contact-row { flex-wrap: wrap; }
-    .contact-row .contact-btn { min-width: calc(25% - 8px); }
-    .cert-thumb {
-      width: 38px; height: 38px; border-radius: 6px; object-fit: cover;
-      margin-left: auto; border: 1px solid var(--divider);
-    }
-    span.link-item { cursor: default; }
-    span.link-item:hover { background: none; margin: 0; padding: 14px 4px; }
-    .avatar img { display: block; }
+    footer { padding: 48px 28px; text-align: center; color: var(--divider); font-size: 13px; border-top: 0.5px solid var(--divider); }
+    footer b { color: var(--secondary); font-weight: 600; }
   </style>
 </head>
 <body>
 
-<div id="state" class="state">
-  <div class="state-inner">
-    <div class="spinner"></div>
-  </div>
-</div>
+  <nav>
+    <div class="brand">Packet</div>
+    <div class="links">
+      <a class="about" href="#about">About</a>
+      <a href="#setup">Set Up</a>
+      <a class="login" href="login.html">Log in</a>
+    </div>
+  </nav>
 
-<main class="card hidden" id="card">
-  <div class="hero">
-    <div class="avatar" id="avatar"></div>
-    <div class="name" id="card-name"></div>
-    <div class="title" id="card-title"></div>
-    <p class="tagline" id="card-bio"></p>
-    <span class="location" id="card-location">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-        <circle cx="12" cy="9" r="2.5"/>
+  <!-- ── Hero ── -->
+  <header class="hero">
+    <div class="stage">
+      <svg class="plane" viewBox="0 0 1100 620" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g id="map"></g>
+        <g id="arcs"></g>
+        <g id="packets"></g>
       </svg>
-      <span id="location-text"></span>
-    </span>
-  </div>
+    </div>
+    <div class="hero-content">
+      <div class="wordmark">Packet</div>
+      <div class="sub">Your world, <b style="font-style:normal;font-weight:600;color:#1d1d1f">one tap</b> away.</div>
+    </div>
+    <div class="scroll-hint">⌄</div>
+  </header>
 
-  <div class="section" id="websites-section">
-    <div class="divider"></div>
-    <div class="section-label">Websites</div>
-    <div class="link-list" id="websites-list"></div>
-  </div>
+  <!-- ── About ── -->
+  <section id="about" class="section">
+    <div class="about">
+      <div>
+        <div class="eyebrow">About</div>
+        <h2>The card that<br>introduces you.</h2>
+        <p>
+          Packet is a <b>digital business card</b> that lives on a single tap.
+          Instead of paper, you carry one smart card — tap it to any phone and
+          your <i>profile, links, and contacts</i> open instantly.
+          Update it anytime; the card never has to change.
+        </p>
+      </div>
+      <div class="tap-illo">
+        <svg width="380" height="340" viewBox="0 0 380 340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="phoneG" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#1d1d1f"/><stop offset="1" stop-color="#3a3a3c"/>
+            </linearGradient>
+            <linearGradient id="cardG" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#0071e3"/><stop offset="1" stop-color="#00c2ff"/>
+            </linearGradient>
+          </defs>
+          <!-- phone -->
+          <g transform="translate(196 70) skewY(-9)">
+            <rect x="0" y="0" width="150" height="250" rx="26" fill="url(#phoneG)"/>
+            <rect x="10" y="12" width="130" height="226" rx="18" fill="#fff"/>
+            <circle cx="75" cy="64" r="22" fill="#e9eef6"/>
+            <rect x="44" y="96" width="62" height="9" rx="4.5" fill="#1d1d1f"/>
+            <rect x="52" y="114" width="46" height="7" rx="3.5" fill="#c7c7cc"/>
+            <rect x="30" y="142" width="90" height="20" rx="6" fill="#f0f2f5"/>
+            <rect x="30" y="170" width="90" height="20" rx="6" fill="#f0f2f5"/>
+            <rect x="30" y="198" width="90" height="20" rx="6" fill="#f0f2f5"/>
+          </g>
+          <!-- nfc card -->
+          <g transform="translate(40 150) skewY(9) rotate(-4)">
+            <rect x="0" y="0" width="180" height="112" rx="16" fill="url(#cardG)"/>
+            <text x="18" y="40" fill="#fff" font-family="SF Pro Display, sans-serif" font-size="22" font-weight="700">Packet</text>
+            <g transform="translate(120 58)" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" opacity="0.95">
+              <path d="M0 28 a14 14 0 0 1 14 -14"/>
+              <path d="M0 28 a26 26 0 0 1 26 -26"/>
+              <path d="M0 28 a38 38 0 0 1 38 -38"/>
+            </g>
+          </g>
+          <!-- tap waves -->
+          <g transform="translate(196 150)" fill="none" stroke="#0071e3" stroke-width="2.4" stroke-linecap="round">
+            <path d="M0 0 q14 14 0 28"><animate attributeName="opacity" values="0;1;0" dur="1.8s" repeatCount="indefinite"/></path>
+            <path d="M10 -6 q22 20 0 40"><animate attributeName="opacity" values="0;1;0" dur="1.8s" begin="0.3s" repeatCount="indefinite"/></path>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
 
-  <div class="section" id="socials-section">
-    <div class="divider"></div>
-    <div class="section-label">Socials</div>
-    <div class="link-list" id="socials-list"></div>
-  </div>
+  <!-- ── Set Up ── -->
+  <section id="setup" class="section setup">
+    <div class="inner">
+      <div class="lead">Already have a card? <i>Let's set it up.</i></div>
+      <p>Tap your Packet to the reader and we'll walk you through the rest.</p>
+      <a class="cta" href="reader.html">Set Up Your Packet</a>
+      <div class="small"><a href="login.html">Already set up? Log in to manage your card →</a></div>
+    </div>
+  </section>
 
-  <div class="section" id="work-section">
-    <div class="divider"></div>
-    <div class="section-label">Work</div>
-    <div class="link-list" id="work-list"></div>
-  </div>
+  <footer>Made with <b>Packet</b> · tap · connect · collaborate</footer>
 
-  <div class="section" id="credentials-section">
-    <div class="divider"></div>
-    <div class="section-label">Credentials</div>
-    <div class="link-list" id="education-list"></div>
-    <div class="section-label" id="certs-label" style="margin-top:16px">Certifications</div>
-    <div class="link-list" id="certs-list"></div>
-  </div>
+  <script>
+    // Stylized "packets crossing a map" backdrop — a dotted plane with arcs and
+    // little packets gliding along them. (First pass; richer 3D can come later.)
+    const NS = 'http://www.w3.org/2000/svg';
+    const mapG = document.getElementById('map');
+    const arcsG = document.getElementById('arcs');
+    const packetsG = document.getElementById('packets');
 
-  <div class="section" id="contact-section">
-    <div class="divider"></div>
-    <div class="section-label">Contact</div>
-    <div class="contact-row" id="contact-row"></div>
-  </div>
-
-  <div class="footer">tap · connect · collaborate</div>
-</main>
-
-<button class="edit-fab hidden" id="edit-fab" title="Edit Card">
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
-    <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
-  </svg>
-</button>
-
-<script type="module">
-  import { db, auth, NOT_CONFIGURED } from './firebase-init.js';
-  import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { renderCard, esc } from './card-shared.js';
-
-  const CARD_ID = new URLSearchParams(window.location.search).get('id');
-
-  function showState(html) {
-    document.getElementById('state').innerHTML = '<div class="state-inner">' + html + '</div>';
-    document.getElementById('state').classList.remove('hidden');
-    document.getElementById('card').classList.add('hidden');
-  }
-
-  function showCard(data) {
-    renderCard(data);
-    document.getElementById('state').classList.add('hidden');
-    document.getElementById('card').classList.remove('hidden');
-
-    // Show the edit pencil only to the signed-in owner of this card.
-    onAuthStateChanged(auth, user => {
-      const fab = document.getElementById('edit-fab');
-      if (user && data.ownerUid && user.uid === data.ownerUid) {
-        fab.classList.remove('hidden');
-        fab.onclick = () => { window.location.href = 'manage.html?id=' + encodeURIComponent(CARD_ID); };
-      } else {
-        fab.classList.add('hidden');
+    // dotted grid (denser in the middle to suggest a map/landmass)
+    for (let y = 0; y < 620; y += 26) {
+      for (let x = 0; x < 1100; x += 26) {
+        const cx = x + (y / 26 % 2 ? 13 : 0);
+        const d = Math.hypot(cx - 550, y - 310) / 560;
+        if (Math.random() > 0.35 + d * 0.5) continue;
+        const dot = document.createElementNS(NS, 'circle');
+        dot.setAttribute('cx', cx); dot.setAttribute('cy', y);
+        dot.setAttribute('r', 1.6); dot.setAttribute('class', 'map-dot');
+        dot.setAttribute('opacity', (1 - d).toFixed(2));
+        mapG.appendChild(dot);
       }
+    }
+
+    // arcs + travelling packets
+    const routes = [
+      [120, 360, 560, 160, 980, 380],
+      [200, 180, 540, 420, 920, 200],
+      [80, 480, 480, 300, 1000, 520],
+      [300, 540, 600, 120, 880, 460],
+      [160, 260, 520, 500, 940, 300],
+    ];
+    routes.forEach((r, i) => {
+      const [x1, y1, cx, cy, x2, y2] = r;
+      const d = `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`;
+      const path = document.createElementNS(NS, 'path');
+      path.setAttribute('d', d); path.setAttribute('class', 'arc');
+      arcsG.appendChild(path);
+
+      const p = document.createElementNS(NS, 'rect');
+      p.setAttribute('width', 9); p.setAttribute('height', 9); p.setAttribute('rx', 2.5);
+      p.setAttribute('class', 'packet'); p.setAttribute('x', -4.5); p.setAttribute('y', -4.5);
+      const anim = document.createElementNS(NS, 'animateMotion');
+      anim.setAttribute('dur', (5 + i * 1.3) + 's');
+      anim.setAttribute('repeatCount', 'indefinite');
+      anim.setAttribute('rotate', 'auto');
+      anim.setAttribute('path', d);
+      anim.setAttribute('begin', (i * 0.8) + 's');
+      p.appendChild(anim);
+      packetsG.appendChild(p);
     });
-  }
-
-  async function init() {
-    if (NOT_CONFIGURED) {
-      showState('<h2>Setup needed</h2><p>Firebase isn\'t configured yet. Add your project keys to <b>firebase-config.js</b> — see SETUP.md.</p>');
-      return;
-    }
-    if (!CARD_ID) {
-      showState('<h2>Packet Cards</h2><p>Tap a Packet Card to view someone\'s profile.</p>');
-      return;
-    }
-    try {
-      const snap = await getDoc(doc(db, 'cards', CARD_ID));
-      if (snap.exists()) {
-        showCard(snap.data());
-      } else {
-        // Unclaimed card → send them to set it up.
-        window.location.href = 'register.html?id=' + encodeURIComponent(CARD_ID);
-      }
-    } catch (e) {
-      showState('<h2>Something went wrong</h2><p>' + esc(e.message) + '</p>');
-    }
-  }
-
-  init();
-</script>
+  </script>
 
 </body>
 </html>

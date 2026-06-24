@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Log in — Packet</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f5f7; --surface: #fff; --text: #1d1d1f; --secondary: #86868b;
+      --divider: #d2d2d7; --accent: #0071e3; --accent-hover: #0077ed; --danger: #ff3b30; --ink: #0a0a0a;
+    }
+    html, body { min-height: 100%; background: var(--bg); color: var(--text);
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; -webkit-font-smoothing: antialiased; }
+    body { display: flex; justify-content: center; padding: 60px 20px 100px; }
+    .wrap { width: 100%; max-width: 420px; }
+    .brand { text-align: center; font-size: 24px; font-weight: 700; letter-spacing: -0.4px; margin-bottom: 6px; }
+    .brand a { color: inherit; text-decoration: none; }
+    .page-header { text-align: center; margin-bottom: 28px; }
+    .page-header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.4px; }
+    .page-header p { font-size: 15px; color: var(--secondary); margin-top: 6px; font-style: italic; }
+    .panel { background: var(--surface); border-radius: 14px; padding: 24px; box-shadow: 0 0.5px 1px rgba(0,0,0,0.05); margin-bottom: 14px; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 12px; font-weight: 500; color: var(--secondary); margin-bottom: 5px; }
+    .field input { width: 100%; padding: 12px 13px; font-size: 15px; font-family: inherit; color: var(--text); background: var(--bg); border: 1px solid transparent; border-radius: 8px; outline: none; transition: border 0.15s, box-shadow 0.15s; }
+    .field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,113,227,0.12); }
+    .primary-btn { width: 100%; padding: 14px; font-size: 15px; font-weight: 600; font-family: inherit; border: none; border-radius: 12px; cursor: pointer; background: var(--ink); color: #fff; margin-top: 6px; transition: opacity 0.15s; }
+    .primary-btn:hover { opacity: 0.92; }
+    .primary-btn:disabled { opacity: 0.5; }
+    .error-msg { color: var(--danger); font-size: 13px; margin-top: 12px; text-align: center; min-height: 16px; }
+    .muted { text-align: center; font-size: 13px; color: var(--secondary); margin-top: 16px; }
+    .muted a { color: var(--accent); text-decoration: none; }
+    .hidden { display: none !important; }
+    .spinner { width: 26px; height: 26px; border: 3px solid var(--divider); border-top-color: var(--secondary); border-radius: 50%; margin: 40px auto; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .card-row { display: flex; align-items: center; gap: 14px; padding: 14px; border: 1px solid var(--divider); border-radius: 12px; margin-bottom: 10px; }
+    .card-row .av { width: 44px; height: 44px; border-radius: 50%; background: #f0f0f2 center/cover no-repeat; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--secondary); }
+    .card-row .meta { flex: 1; min-width: 0; }
+    .card-row .meta .nm { font-size: 15px; font-weight: 600; }
+    .card-row .meta .sub { font-size: 12px; color: var(--secondary); }
+    .card-row .acts { display: flex; gap: 8px; }
+    .card-row .acts a { font-size: 13px; font-weight: 600; text-decoration: none; padding: 7px 14px; border-radius: 980px; }
+    .card-row .acts .view { background: var(--bg); color: var(--text); }
+    .card-row .acts .edit { background: var(--accent); color: #fff; }
+    .signout { background: none; border: none; color: var(--secondary); font-size: 13px; font-family: inherit; cursor: pointer; text-decoration: underline; display: block; margin: 16px auto 0; }
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="brand"><a href="index.html">Packet</a></div>
+
+  <div id="loading"><div class="spinner"></div></div>
+
+  <!-- Sign in -->
+  <div id="signin" class="hidden">
+    <div class="page-header"><h1>Welcome back</h1><p>Log in to manage your card.</p></div>
+    <div class="panel">
+      <div class="field"><label>Email</label><input type="email" id="email" placeholder="you@example.com" autocomplete="email" /></div>
+      <div class="field"><label>Password</label><input type="password" id="password" placeholder="Your password" autocomplete="current-password" /></div>
+      <button class="primary-btn" id="login-btn">Log in</button>
+      <div class="error-msg" id="error"></div>
+    </div>
+    <div class="muted">Don't have a card yet? <a href="reader.html">Set one up →</a></div>
+  </div>
+
+  <!-- My cards -->
+  <div id="cards" class="hidden">
+    <div class="page-header"><h1>Your cards</h1><p id="cards-sub">Open to view or edit.</p></div>
+    <div class="panel">
+      <div id="cards-list"></div>
+    </div>
+    <button class="signout" id="signout">Sign out</button>
+  </div>
+
+  <!-- Setup needed -->
+  <div id="setup-needed" class="hidden">
+    <div class="panel" style="text-align:center"><h2 style="font-size:20px;font-weight:600">Setup needed</h2><p style="color:var(--secondary);margin-top:8px;font-size:14px">Firebase isn't configured yet — see SETUP.md.</p></div>
+  </div>
+</div>
+
+<script type="module">
+  import { db, auth, NOT_CONFIGURED } from './firebase-init.js';
+  import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getInitials, esc } from './card-shared.js';
+
+  function show(id) {
+    ['loading','signin','cards','setup-needed'].forEach(s => document.getElementById(s).classList.toggle('hidden', s !== id));
+  }
+
+  document.getElementById('signout').addEventListener('click', () => signOut(auth));
+
+  document.getElementById('login-btn').addEventListener('click', async () => {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const err = document.getElementById('error');
+    err.textContent = '';
+    if (!email || !password) { err.textContent = 'Enter your email and password.'; return; }
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (e) {
+      err.textContent = {
+        'auth/wrong-password': 'Incorrect password.',
+        'auth/user-not-found': 'No account with that email.',
+        'auth/invalid-credential': 'Email or password is incorrect.',
+        'auth/invalid-email': 'That email address looks invalid.',
+      }[e.code] || e.message;
+    }
+  });
+
+  async function loadCards(user) {
+    const snap = await getDocs(query(collection(db, 'cards'), where('ownerUid', '==', user.uid)));
+    const list = document.getElementById('cards-list');
+    if (snap.empty) {
+      document.getElementById('cards-sub').textContent = 'You don\'t have a card yet.';
+      list.innerHTML = '<div class="muted" style="margin:0">Tap your Packet to set one up. <a href="reader.html">Open reader →</a></div>';
+      show('cards');
+      return;
+    }
+    list.innerHTML = '';
+    snap.forEach(docSnap => {
+      const d = docSnap.data();
+      const id = docSnap.id;
+      const av = d.avatar ? `style="background-image:url(${esc(d.avatar)})"` : '';
+      const initials = d.avatar ? '' : getInitials(d.name);
+      const row = document.createElement('div');
+      row.className = 'card-row';
+      row.innerHTML = `
+        <div class="av" ${av}>${initials}</div>
+        <div class="meta">
+          <div class="nm">${esc(d.name || 'Untitled')}</div>
+          <div class="sub">${esc([d.title, d.company].filter(Boolean).join(' · ') || id)}</div>
+        </div>
+        <div class="acts">
+          <a class="view" href="card.html?id=${encodeURIComponent(id)}">View</a>
+          <a class="edit" href="manage.html?id=${encodeURIComponent(id)}">Edit</a>
+        </div>`;
+      list.appendChild(row);
+    });
+    show('cards');
+  }
+
+  if (NOT_CONFIGURED) {
+    show('setup-needed');
+  } else {
+    onAuthStateChanged(auth, user => {
+      if (user) loadCards(user);
+      else show('signin');
+    });
+  }
+</script>
+
+</body>
+</html>

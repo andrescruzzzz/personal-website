@@ -171,6 +171,47 @@ export const COUNTRY_CODES = [
   { c: '🇵🇰', d: '+92' }, { c: '🇧🇩', d: '+880' }, { c: '🇶🇦', d: '+974' }, { c: '🇮🇪', d: '+353' },
 ];
 
+// Country list with flag emojis (for the location pickers).
+export const COUNTRIES = [
+  { f: '🇵🇭', n: 'Philippines' }, { f: '🇺🇸', n: 'United States' }, { f: '🇨🇦', n: 'Canada' },
+  { f: '🇬🇧', n: 'United Kingdom' }, { f: '🇦🇺', n: 'Australia' }, { f: '🇳🇿', n: 'New Zealand' },
+  { f: '🇮🇪', n: 'Ireland' }, { f: '🇸🇬', n: 'Singapore' }, { f: '🇲🇾', n: 'Malaysia' },
+  { f: '🇮🇩', n: 'Indonesia' }, { f: '🇹🇭', n: 'Thailand' }, { f: '🇻🇳', n: 'Vietnam' },
+  { f: '🇯🇵', n: 'Japan' }, { f: '🇰🇷', n: 'South Korea' }, { f: '🇨🇳', n: 'China' },
+  { f: '🇭🇰', n: 'Hong Kong' }, { f: '🇹🇼', n: 'Taiwan' }, { f: '🇮🇳', n: 'India' },
+  { f: '🇵🇰', n: 'Pakistan' }, { f: '🇧🇩', n: 'Bangladesh' }, { f: '🇦🇪', n: 'United Arab Emirates' },
+  { f: '🇸🇦', n: 'Saudi Arabia' }, { f: '🇶🇦', n: 'Qatar' }, { f: '🇮🇱', n: 'Israel' },
+  { f: '🇹🇷', n: 'Turkey' }, { f: '🇪🇬', n: 'Egypt' }, { f: '🇿🇦', n: 'South Africa' },
+  { f: '🇳🇬', n: 'Nigeria' }, { f: '🇰🇪', n: 'Kenya' }, { f: '🇩🇪', n: 'Germany' },
+  { f: '🇫🇷', n: 'France' }, { f: '🇪🇸', n: 'Spain' }, { f: '🇮🇹', n: 'Italy' },
+  { f: '🇵🇹', n: 'Portugal' }, { f: '🇳🇱', n: 'Netherlands' }, { f: '🇧🇪', n: 'Belgium' },
+  { f: '🇨🇭', n: 'Switzerland' }, { f: '🇦🇹', n: 'Austria' }, { f: '🇸🇪', n: 'Sweden' },
+  { f: '🇳🇴', n: 'Norway' }, { f: '🇩🇰', n: 'Denmark' }, { f: '🇫🇮', n: 'Finland' },
+  { f: '🇵🇱', n: 'Poland' }, { f: '🇨🇿', n: 'Czechia' }, { f: '🇬🇷', n: 'Greece' },
+  { f: '🇷🇺', n: 'Russia' }, { f: '🇧🇷', n: 'Brazil' }, { f: '🇲🇽', n: 'Mexico' },
+  { f: '🇦🇷', n: 'Argentina' }, { f: '🇨🇱', n: 'Chile' }, { f: '🇨🇴', n: 'Colombia' },
+];
+
+// Major cities/regions for selected countries. Countries not listed fall back
+// to a free-text city field.
+export const CITIES = {
+  'Philippines': ['Manila', 'Quezon City', 'Makati', 'Taguig (BGC)', 'Pasig', 'Mandaluyong', 'Pasay', 'Parañaque', 'Caloocan', 'Cebu City', 'Mandaue', 'Lapu-Lapu', 'Davao City', 'Cagayan de Oro', 'Iloilo City', 'Bacolod', 'Baguio', 'Angeles', 'Antipolo', 'Zamboanga City', 'General Santos', 'Tagaytay', 'Batangas City', 'Naga', 'Dumaguete'],
+  'United States': ['New York', 'Los Angeles', 'San Francisco', 'Chicago', 'Houston', 'Seattle', 'Boston', 'Austin', 'Miami', 'Washington, D.C.', 'Atlanta', 'Dallas', 'Denver', 'San Diego', 'Las Vegas'],
+  'United Kingdom': ['London', 'Manchester', 'Birmingham', 'Leeds', 'Glasgow', 'Edinburgh', 'Liverpool', 'Bristol', 'Cardiff', 'Belfast'],
+  'Canada': ['Toronto', 'Vancouver', 'Montreal', 'Calgary', 'Ottawa', 'Edmonton', 'Winnipeg', 'Quebec City'],
+  'Australia': ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Canberra', 'Gold Coast'],
+  'Singapore': ['Singapore'],
+  'Malaysia': ['Kuala Lumpur', 'George Town', 'Johor Bahru', 'Ipoh', 'Kota Kinabalu', 'Kuching'],
+  'Indonesia': ['Jakarta', 'Surabaya', 'Bandung', 'Medan', 'Bali (Denpasar)', 'Yogyakarta'],
+  'Japan': ['Tokyo', 'Osaka', 'Kyoto', 'Yokohama', 'Nagoya', 'Sapporo', 'Fukuoka'],
+  'South Korea': ['Seoul', 'Busan', 'Incheon', 'Daegu', 'Daejeon', 'Gwangju'],
+  'United Arab Emirates': ['Dubai', 'Abu Dhabi', 'Sharjah', 'Ajman'],
+  'India': ['Mumbai', 'Delhi', 'Bengaluru', 'Hyderabad', 'Chennai', 'Kolkata', 'Pune'],
+  'Germany': ['Berlin', 'Munich', 'Frankfurt', 'Hamburg', 'Cologne', 'Stuttgart'],
+  'France': ['Paris', 'Lyon', 'Marseille', 'Toulouse', 'Nice', 'Bordeaux'],
+  'Spain': ['Madrid', 'Barcelona', 'Valencia', 'Seville', 'Málaga', 'Bilbao'],
+};
+
 /* ───────────────────────── icon dropdown component ───────────────────────── */
 
 let stylesInjected = false;
@@ -275,18 +316,25 @@ export function addWebsiteRow(value = '') {
   document.getElementById('websites-list').appendChild(row);
 }
 
-export function addSocialRow(s = { platform: 'instagram', handle: '' }) {
+// Platforms whose profile URL is NOT simply base/username — these require an
+// explicit link from the user. The rest auto-build the link from the handle.
+export const LINK_REQUIRED = new Set(['facebook', 'spotify', 'applemusic', 'discord']);
+
+export function addSocialRow(s = { platform: 'instagram', handle: '', link: '' }) {
   const row = el('<div class="entry"></div>');
-  const handleField = el(`<div class="field"><label></label><input class="s-handle" value="${esc(s.handle)}" /></div>`);
+  const handleField = el(`<div class="field"><label></label><input class="s-handle" value="${esc(s.handle || '')}" /></div>`);
+  const linkField = el(`<div class="field" style="flex-basis:100%"><label></label><input class="s-link" placeholder="https://..." value="${esc(s.link || '')}" /></div>`);
   function applyLabel(key) {
     const d = SOCIAL_PLATFORMS[key];
     handleField.querySelector('label').textContent = d.handleLabel;
     handleField.querySelector('input').placeholder = d.handleLabel;
+    linkField.querySelector('label').textContent = LINK_REQUIRED.has(key) ? 'Profile link (required)' : 'Profile link (optional)';
   }
   const dd = createIconDropdown(SOCIAL_PLATFORMS, s.platform, applyLabel);
   applyLabel(SOCIAL_PLATFORMS[s.platform] ? s.platform : 'instagram');
   row.appendChild(dd);
   row.appendChild(handleField);
+  row.appendChild(linkField);
   row.appendChild(removeBtn(row));
   document.getElementById('socials-list').appendChild(row);
 }
@@ -385,6 +433,33 @@ function titleOptions(sel) {
   return html;
 }
 
+// Builds the city control inside #city-container: a dropdown when we have
+// cities for the country, otherwise a free-text input. Always uses id city-input.
+function renderCityControl(country, selected) {
+  const wrap = document.getElementById('city-container');
+  const cities = CITIES[country];
+  if (cities && cities.length) {
+    wrap.innerHTML = `<label>City / Region</label>
+      <select id="city-input">
+        <option value="">Select city…</option>
+        ${cities.map(c => `<option ${c === selected ? 'selected' : ''}>${esc(c)}</option>`).join('')}
+        <option value="__other__" ${selected && !cities.includes(selected) ? 'selected' : ''}>Other…</option>
+      </select>`;
+    const sel = wrap.querySelector('#city-input');
+    sel.addEventListener('change', () => {
+      if (sel.value === '__other__') {
+        wrap.innerHTML = `<label>City / Region</label><input id="city-input" placeholder="City or region" value="" />`;
+        wrap.querySelector('#city-input').focus();
+      }
+    });
+    if (selected && !cities.includes(selected)) {
+      wrap.innerHTML = `<label>City / Region</label><input id="city-input" placeholder="City or region" value="${esc(selected)}" />`;
+    }
+  } else {
+    wrap.innerHTML = `<label>City / Region</label><input id="city-input" placeholder="City or region" value="${esc(selected || '')}" />`;
+  }
+}
+
 // Wires up a standard form (used by register.html and manage.html).
 export function setupForm() {
   injectFormStyles();
@@ -392,6 +467,12 @@ export function setupForm() {
   document.getElementById('title-select').innerHTML = titleOptions(null);
   document.getElementById('phone-code').innerHTML = countryOptions(null);
   document.getElementById('whatsapp-code').innerHTML = countryOptions(null);
+
+  const countrySel = document.getElementById('country-select');
+  countrySel.innerHTML = '<option value="">Select country…</option>' +
+    COUNTRIES.map(c => `<option value="${esc(c.n)}">${c.f} ${esc(c.n)}</option>`).join('');
+  countrySel.addEventListener('change', () => renderCityControl(countrySel.value, ''));
+  renderCityControl('', '');
 
   const titleSel = document.getElementById('title-select');
   titleSel.addEventListener('change', () => {
@@ -430,7 +511,8 @@ export function gatherForm() {
   const socials = [...document.querySelectorAll('#socials-list .entry')].map(row => ({
     platform: row.querySelector('.icon-dd').dataset.value,
     handle: row.querySelector('.s-handle').value.trim(),
-  })).filter(s => s.handle);
+    link: row.querySelector('.s-link').value.trim(),
+  })).filter(s => s.handle || s.link);
 
   const work = [...document.querySelectorAll('#work-list .entry')].map(row => ({
     type: row.querySelector('.icon-dd').dataset.value,
@@ -455,12 +537,19 @@ export function gatherForm() {
   const emails = [...document.querySelectorAll('#emails-list .email-input')]
     .map(i => i.value.trim()).filter(Boolean);
 
+  const country = document.getElementById('country-select').value;
+  const cityEl = document.getElementById('city-input');
+  const city = cityEl ? (cityEl.value === '__other__' ? '' : cityEl.value.trim()) : '';
+  const location = [city, country].filter(Boolean).join(', ');
+
   return {
     name: document.getElementById('name').value.trim(),
     title,
     company: document.getElementById('company').value.trim(),
     bio: document.getElementById('bio').value.trim(),
-    location: document.getElementById('location').value.trim(),
+    country,
+    city,
+    location,
     avatar: document.getElementById('avatar-data').value || '',
     websites,
     socials,
@@ -487,7 +576,8 @@ export function fillForm(data) {
   }
   document.getElementById('company').value = data.company || '';
   document.getElementById('bio').value = data.bio || '';
-  document.getElementById('location').value = data.location || '';
+  document.getElementById('country-select').value = data.country || '';
+  renderCityControl(data.country || '', data.city || '');
 
   if (data.avatar) {
     document.getElementById('avatar-data').value = data.avatar;
@@ -544,9 +634,10 @@ export function renderCard(data) {
     : (data.company || '');
   document.getElementById('card-title').textContent = titleText;
   document.getElementById('card-bio').textContent = data.bio || '';
-  document.getElementById('location-text').textContent = data.location || '';
+  const locText = data.location || [data.city, data.country].filter(Boolean).join(', ');
+  document.getElementById('location-text').textContent = locText;
   document.title = data.name || 'Card';
-  if (!data.location) document.getElementById('card-location').classList.add('hidden');
+  if (!locText) document.getElementById('card-location').classList.add('hidden');
 
   // Websites
   const websites = data.websites || [];
@@ -562,9 +653,9 @@ export function renderCard(data) {
   else socEl.innerHTML = socials.map(s => {
     const def = SOCIAL_PLATFORMS[s.platform];
     if (!def) return '';
-    const url = def.url(s.handle);
-    const handle = clean(s.handle);
-    return linkRow(url || '#', def.bg, def.svg, def.label, '@' + handle, !!url);
+    const url = (s.link && s.link.trim()) ? normalizeUrl(s.link) : def.url(s.handle);
+    const sub = s.handle ? '@' + clean(s.handle) : (url ? hostname(url) : '');
+    return linkRow(url || '#', def.bg, def.svg, def.label, sub, !!url);
   }).join('');
 
   // Work

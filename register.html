@@ -11,7 +11,7 @@
       --divider: #d2d2d7; --accent: #0071e3; --accent-hover: #0077ed; --danger: #ff3b30; --radius: 12px;
     }
     html, body { min-height: 100%; background: var(--bg); color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
       -webkit-font-smoothing: antialiased; }
     body { display: flex; justify-content: center; padding: 40px 20px 100px; }
     .wrap { width: 100%; max-width: 480px; }
@@ -94,7 +94,8 @@
       <div class="field" id="title-other-wrap" style="display:none"><label>Custom title</label><input type="text" id="title-other" placeholder="Type your title" /></div>
       <div class="field"><label>Company (optional)</label><input type="text" id="company" placeholder="Company name" /></div>
       <div class="field"><label>Bio</label><textarea id="bio" placeholder="A short tagline about yourself..."></textarea></div>
-      <div class="field"><label>Location</label><input type="text" id="location" placeholder="City, Country" /></div>
+      <div class="field"><label>Country</label><select id="country-select"></select></div>
+      <div class="field" id="city-container"></div>
     </div>
 
     <div class="panel">
@@ -211,7 +212,7 @@
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
-      window.location.href = 'index.html?id=' + encodeURIComponent(CARD_ID);
+      window.location.href = 'card.html?id=' + encodeURIComponent(CARD_ID);
     } catch (e) {
       errEl.textContent = e.message;
       btn.disabled = false;
@@ -241,7 +242,7 @@
     try {
       const snap = await getDoc(doc(db, 'cards', CARD_ID));
       if (snap.exists()) {
-        document.getElementById('view-link').href = 'index.html?id=' + encodeURIComponent(CARD_ID);
+        document.getElementById('view-link').href = 'card.html?id=' + encodeURIComponent(CARD_ID);
         show('claimed');
       } else {
         show('auth-step');
