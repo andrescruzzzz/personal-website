@@ -85,16 +85,16 @@
       box-shadow: 0 0.045em 0.13em rgba(0,0,0,0.22), inset 0 0 0 0.012em rgba(255,255,255,0.65);
     }
 
-    /* silver card enclosing the "c" */
+    /* realistic silver card enclosing the "c" */
     .c-card {
       position: absolute; z-index: 1; left: 45.7%; top: 57%; transform: translate(-50%, -50%);
-      width: 0.54em; height: 0.64em; border-radius: 0.1em;
+      width: 0.66em; height: 0.74em; overflow: visible;
     }
 
-    /* small 3D silver packet shooting up out of the wordmark toward the "t" */
+    /* small realistic 3D packet shooting up out of the wordmark toward the "t" */
     .fly-card {
-      position: absolute; z-index: 3; left: 60%; top: -0.32em;
-      width: 0.98em; height: 0.72em; overflow: visible;
+      position: absolute; z-index: 3; left: 60%; top: -0.34em;
+      width: 1.06em; height: 0.78em; overflow: visible;
       animation: fly 4.4s ease-in-out infinite; will-change: transform;
     }
     @keyframes fly {
@@ -178,25 +178,68 @@
     <div class="hero-content">
       <div class="wordmark-wrap">
         <div class="wordmark">Packet</div>
-        <span class="c-card silver" aria-hidden="true"></span>
-        <svg class="fly-card" viewBox="0 0 130 96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <svg class="c-card" viewBox="0 0 120 134" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs>
-            <linearGradient id="flyAg" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#fafafa"/><stop offset="0.42" stop-color="#c0c0c6"/>
-              <stop offset="0.58" stop-color="#eef0f2"/><stop offset="1" stop-color="#a8a8ae"/>
+            <linearGradient id="cMetal" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#ffffff"/><stop offset="0.18" stop-color="#d4d6db"/>
+              <stop offset="0.36" stop-color="#abadb4"/><stop offset="0.5" stop-color="#edeff2"/>
+              <stop offset="0.64" stop-color="#b9bbc1"/><stop offset="0.82" stop-color="#d8dade"/>
+              <stop offset="1" stop-color="#9a9ca2"/>
             </linearGradient>
-            <filter id="flyShadow" x="-40%" y="-40%" width="180%" height="180%">
-              <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000" flood-opacity="0.22"/>
+            <linearGradient id="chipG" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#f4e4a8"/><stop offset="0.5" stop-color="#d8b65c"/><stop offset="1" stop-color="#a9842f"/>
+            </linearGradient>
+            <clipPath id="cClip"><rect x="5" y="5" width="110" height="124" rx="16"/></clipPath>
+            <filter id="cShadow" x="-30%" y="-30%" width="160%" height="160%">
+              <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.26"/>
             </filter>
           </defs>
-          <g stroke="#aeb2ba" stroke-width="3.4" stroke-linecap="round" opacity="0.7">
-            <line x1="4" y1="60" x2="30" y2="54"/>
-            <line x1="9" y1="71" x2="33" y2="65"/>
-            <line x1="17" y1="81" x2="37" y2="76"/>
+          <g filter="url(#cShadow)">
+            <rect x="5" y="5" width="110" height="124" rx="16" fill="url(#cMetal)"/>
+            <g clip-path="url(#cClip)">
+              <path d="M22 5 L50 5 L2 129 L-26 129 Z" fill="#ffffff" opacity="0.4"/>
+              <path d="M74 5 L88 5 L40 129 L26 129 Z" fill="#ffffff" opacity="0.18"/>
+            </g>
+            <rect x="5.8" y="5.8" width="108.4" height="122.4" rx="15.3" fill="none" stroke="#ffffff" stroke-opacity="0.65" stroke-width="1.2"/>
+            <rect x="5" y="5" width="110" height="124" rx="16" fill="none" stroke="#7e8086" stroke-opacity="0.35" stroke-width="1"/>
+            <g transform="translate(17 15)">
+              <rect width="25" height="19" rx="4" fill="url(#chipG)" stroke="#977f33" stroke-width="0.6"/>
+              <path d="M0 9.5 H25 M12.5 0 V19" stroke="#8a7128" stroke-width="0.7" opacity="0.55"/>
+              <rect x="8" y="5.5" width="9" height="8" rx="1.5" fill="none" stroke="#8a7128" stroke-width="0.7" opacity="0.55"/>
+            </g>
           </g>
-          <g filter="url(#flyShadow)">
-            <path d="M46 50 L104 28 L126 52 L68 74 Z" fill="url(#flyAg)" stroke="#ffffff" stroke-opacity="0.55" stroke-width="1.2"/>
-            <path d="M58 52 L74 46 L81 54 L65 60 Z" fill="#cdced3"/>
+        </svg>
+        <svg class="fly-card" viewBox="0 0 150 110" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="fMetal" x1="0.1" y1="0" x2="0.9" y2="1">
+              <stop offset="0" stop-color="#ffffff"/><stop offset="0.2" stop-color="#d4d6db"/>
+              <stop offset="0.4" stop-color="#a9abb2"/><stop offset="0.54" stop-color="#eef0f3"/>
+              <stop offset="0.7" stop-color="#bbbdc3"/><stop offset="1" stop-color="#96989e"/>
+            </linearGradient>
+            <linearGradient id="fChip" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#f4e4a8"/><stop offset="1" stop-color="#b58f34"/>
+            </linearGradient>
+            <filter id="fShadow" x="-40%" y="-40%" width="180%" height="180%">
+              <feDropShadow dx="0" dy="4" stdDeviation="4.5" flood-color="#000" flood-opacity="0.26"/>
+            </filter>
+          </defs>
+          <!-- speed streaks trailing behind -->
+          <g stroke="#a7abb3" stroke-width="3.4" stroke-linecap="round" opacity="0.65">
+            <line x1="4" y1="62" x2="30" y2="56"/>
+            <line x1="9" y1="73" x2="33" y2="67"/>
+            <line x1="18" y1="83" x2="38" y2="78"/>
+          </g>
+          <g filter="url(#fShadow)">
+            <!-- card thickness (offset edge) -->
+            <path d="M50 58 L108 36 L132 60 L74 82 Z" fill="#83858c"/>
+            <!-- top face -->
+            <path d="M48 52 L106 30 L130 54 L72 76 Z" fill="url(#fMetal)"/>
+            <!-- glossy sheen across the face -->
+            <path d="M70 41 L86 35 L60 64 L48 62 Z" fill="#ffffff" opacity="0.3"/>
+            <!-- bevel highlight on the top edge -->
+            <path d="M48 52 L106 30" fill="none" stroke="#ffffff" stroke-opacity="0.7" stroke-width="1.3"/>
+            <!-- chip -->
+            <path d="M60 52 L74 47 L80 54 L66 59 Z" fill="url(#fChip)"/>
           </g>
         </svg>
       </div>
