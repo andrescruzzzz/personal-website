@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Edit your card</title>
+  <link rel="shortcut icon" href="assets/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -51,6 +54,16 @@
     .hidden { display: none !important; }
     .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--text); color: white; padding: 12px 24px; border-radius: 50px; font-size: 14px; font-weight: 500; opacity: 0; transition: transform 0.3s, opacity 0.3s; pointer-events: none; z-index: 100; }
     .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    @media (max-width: 560px) {
+      body { padding: 24px 14px 80px; }
+      .wrap { max-width: 100%; }
+      .page-header h1 { font-size: 27px; }
+      .panel { padding: 20px; }
+      .actions { flex-direction: column; }
+      .field div[style*="display:flex"] { flex-wrap: wrap; }
+      .field div[style*="display:flex"] select,
+      .field div[style*="display:flex"] input { flex: 1 1 100% !important; }
+    }
   </style>
 </head>
 <body>
