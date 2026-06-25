@@ -45,6 +45,9 @@
     .center { text-align: center; }
     .center p { color: var(--secondary); font-size: 15px; line-height: 1.5; margin: 8px 0 20px; }
     .center a.btn { display: inline-block; background: var(--accent); color: white; text-decoration: none; font-size: 15px; font-weight: 600; padding: 12px 28px; border-radius: 24px; }
+    .consent { display: grid; grid-template-columns: 18px 1fr; gap: 10px; align-items: start; margin-top: 14px; color: var(--secondary); font-size: 12px; line-height: 1.4; }
+    .consent input { width: 18px; height: 18px; margin-top: 1px; }
+    .consent a { color: var(--accent); font-weight: 600; text-decoration: none; }
     .spinner { width: 28px; height: 28px; border: 3px solid var(--divider); border-top-color: var(--secondary); border-radius: 50%; margin: 40px auto; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .swatch {
@@ -89,6 +92,10 @@
       <div class="panel-title" id="auth-title">Create account</div>
       <div class="field"><label>Email</label><input type="email" id="auth-email" placeholder="you@example.com" autocomplete="email" /></div>
       <div class="field"><label>Password</label><input type="password" id="auth-password" placeholder="At least 6 characters" autocomplete="new-password" /></div>
+      <label class="consent">
+        <input type="checkbox" id="age-confirm" />
+        <span>I confirm I am 13 or older and agree to the <a href="privacy.html">Privacy Policy</a>.</span>
+      </label>
       <button class="primary-btn" id="auth-submit">Create account &amp; continue</button>
       <div class="error-msg" id="auth-error"></div>
       <button class="link-btn" id="auth-toggle">Already have an account? Sign in</button>
@@ -308,8 +315,10 @@
     const password = document.getElementById('auth-password').value;
     const errEl = document.getElementById('auth-error');
     const btn = document.getElementById('auth-submit');
+    const ageConfirmed = document.getElementById('age-confirm').checked;
     errEl.textContent = '';
     if (!email || !password) { errEl.textContent = 'Enter your email and password.'; return; }
+    if (!ageConfirmed) { errEl.textContent = 'You must confirm you are 13 or older to continue.'; return; }
     btn.disabled = true;
     try {
       if (signUpMode) await createUserWithEmailAndPassword(auth, email, password);
