@@ -44,6 +44,13 @@
     .center a.btn { display: inline-block; background: var(--accent); color: white; text-decoration: none; font-size: 15px; font-weight: 600; padding: 12px 28px; border-radius: 24px; }
     .spinner { width: 28px; height: 28px; border: 3px solid var(--divider); border-top-color: var(--secondary); border-radius: 50%; margin: 40px auto; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
+    .swatch {
+      width: 44px; height: 44px; border-radius: 10px; cursor: pointer; border: 2px solid transparent;
+      transition: border .15s, transform .1s; position: relative;
+    }
+    .swatch:hover { transform: scale(1.08); }
+    .swatch.sel { border-color: var(--text); }
+    .swatch.sel::after { content: '✓'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.4); }
   </style>
 </head>
 <body>
@@ -73,6 +80,67 @@
       <div class="error-msg" id="auth-error"></div>
       <button class="link-btn" id="auth-toggle">Already have an account? Sign in</button>
     </div>
+  </div>
+
+  <!-- Card type chooser -->
+  <div id="type-step" class="hidden">
+    <div class="page-header"><h1>What kind of card?</h1><p>Choose what this card is for.</p></div>
+    <div style="display:flex;gap:14px">
+      <button class="panel" id="pick-personal" style="flex:1;cursor:pointer;text-align:center;border:2px solid transparent;transition:border .15s">
+        <div style="font-size:32px;margin-bottom:8px">👤</div>
+        <div style="font-size:17px;font-weight:600">Personal</div>
+        <div style="font-size:13px;color:var(--secondary);margin-top:4px">Your own profile, socials, resume, and contact info.</div>
+      </button>
+      <button class="panel" id="pick-business" style="flex:1;cursor:pointer;text-align:center;border:2px solid transparent;transition:border .15s">
+        <div style="font-size:32px;margin-bottom:8px">🏢</div>
+        <div style="font-size:17px;font-weight:600">Business</div>
+        <div style="font-size:13px;color:var(--secondary);margin-top:4px">Your company's logo, socials, website, and contact.</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Business form -->
+  <div id="biz-step" class="hidden">
+    <div class="page-header"><h1>Business card</h1><p>Add your company details. You can edit anytime.</p></div>
+    <div class="panel">
+      <div class="panel-title">Company</div>
+      <div class="avatar-upload" style="margin-bottom:18px">
+        <div class="avatar-preview" id="biz-logo-preview">Logo</div>
+        <div><div style="font-size:13px;font-weight:500">Company logo</div><div style="font-size:12px;color:var(--secondary);margin-top:2px">Optional. Tap to upload.</div></div>
+        <input type="file" id="biz-logo-input" accept="image/*" style="display:none" />
+        <input type="hidden" id="biz-logo-data" />
+      </div>
+      <div class="field"><label>Company Name</label><input type="text" id="biz-name" placeholder="Your company name" /></div>
+      <div class="field"><label>Website (optional)</label><input type="url" id="biz-website" placeholder="https://yourcompany.com" /></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Socials (at least one required)</div>
+      <div id="biz-socials-list"></div>
+      <button type="button" class="add-btn" id="biz-add-social">+ Add Social</button>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Contact</div>
+      <div class="field"><label>Business Email (optional)</label><input type="email" id="biz-email" placeholder="info@company.com" /></div>
+      <div class="field"><label>Business Phone (optional)</label>
+        <div style="display:flex;gap:8px"><select id="biz-phone-code" style="flex:0 0 110px"></select><input type="tel" id="biz-phone-number" placeholder="917 123 4567" style="flex:1" /></div>
+      </div>
+    </div>
+    <button class="primary-btn" id="biz-next-btn">Choose card color →</button>
+    <div class="error-msg" id="biz-error"></div>
+  </div>
+
+  <!-- Color picker -->
+  <div id="color-step" class="hidden">
+    <div class="page-header"><h1>Pick a card color</h1><p>This will be the background of your business card.</p></div>
+    <div class="panel">
+      <div class="panel-title">Basic</div>
+      <div id="basic-colors" style="display:flex;flex-wrap:wrap;gap:10px"></div>
+      <div class="panel-title" style="margin-top:20px">Pantone</div>
+      <div id="pantone-colors" style="display:flex;flex-wrap:wrap;gap:10px"></div>
+      <input type="hidden" id="biz-bg-color" value="#1d1d1f" />
+    </div>
+    <button class="primary-btn" id="biz-finish-btn">Finish &amp; publish</button>
+    <div class="error-msg" id="color-error"></div>
   </div>
 
   <div id="form-step" class="hidden">
@@ -155,15 +223,62 @@
   import { db, auth, NOT_CONFIGURED } from './firebase-init.js';
   import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { setupForm, gatherForm, addEmailRow } from './card-shared.js';
+  import { setupForm, gatherForm, addEmailRow, addSocialRow, compressImage, COUNTRY_CODES, injectFormStyles } from './card-shared.js';
 
   const CARD_ID = new URLSearchParams(window.location.search).get('id');
   let signUpMode = true;
+  let cardType = 'personal';
 
   setupForm();
+  injectFormStyles();
+
+  // Wire up business form
+  const bizPhoneCode = document.getElementById('biz-phone-code');
+  bizPhoneCode.innerHTML = COUNTRY_CODES.map((c, i) =>
+    `<option value="${c.d}" ${i === 0 ? 'selected' : ''}>${c.c} ${c.d}</option>`).join('');
+  const bizLogoPreview = document.getElementById('biz-logo-preview');
+  const bizLogoInput = document.getElementById('biz-logo-input');
+  const bizLogoData = document.getElementById('biz-logo-data');
+  bizLogoPreview.addEventListener('click', () => bizLogoInput.click());
+  bizLogoInput.addEventListener('change', async () => {
+    const f = bizLogoInput.files[0]; if (!f) return;
+    const url = await compressImage(f, 256, 0.85);
+    bizLogoData.value = url;
+    bizLogoPreview.style.backgroundImage = `url(${url})`;
+    bizLogoPreview.classList.add('has-image');
+  });
+  document.getElementById('biz-add-social').addEventListener('click', () => {
+    addSocialRow({ platform: 'instagram', handle: '', link: '' });
+    // move new row into biz list
+    const mainList = document.getElementById('socials-list');
+    const bizList = document.getElementById('biz-socials-list');
+    if (mainList.lastElementChild) bizList.appendChild(mainList.lastElementChild);
+  });
+
+  // Color picker
+  const BASIC = ['#1d1d1f','#ffffff','#f5f5f7','#e8c63e','#ff3b30','#ff9500','#34c759','#0a84ff','#5e5ce6','#af52de','#5e6e2f'];
+  const PANTONE = [
+    {n:'Living Coral',c:'#FF6F61'},{n:'Classic Blue',c:'#0F4C81'},{n:'Illuminating',c:'#F5DF4D'},
+    {n:'Very Peri',c:'#6667AB'},{n:'Viva Magenta',c:'#BB2649'},{n:'Peach Fuzz',c:'#FFBE98'},
+    {n:'Mocha Mousse',c:'#A47764'},{n:'Greenery',c:'#88B04B'},{n:'Ultra Violet',c:'#5F4B8B'},
+    {n:'Marsala',c:'#955251'},{n:'Rose Quartz',c:'#F7CAC9'},{n:'Serenity',c:'#92A8D1'},
+    {n:'Tangerine Tango',c:'#DD4124'},{n:'Emerald',c:'#009473'},{n:'Radiant Orchid',c:'#B163A3'},
+    {n:'Mimosa',c:'#F0C05A'},{n:'Honeysuckle',c:'#D94F70'},{n:'Sand Dollar',c:'#DFCFBE'},
+  ];
+  function renderColors() {
+    const sel = document.getElementById('biz-bg-color').value;
+    document.getElementById('basic-colors').innerHTML = BASIC.map(c =>
+      `<div class="swatch ${c===sel?'sel':''}" style="background:${c}${c==='#ffffff'?';box-shadow:inset 0 0 0 1px #d2d2d7':''}" data-c="${c}"></div>`).join('');
+    document.getElementById('pantone-colors').innerHTML = PANTONE.map(p =>
+      `<div class="swatch ${p.c===sel?'sel':''}" style="background:${p.c}" title="${p.n}" data-c="${p.c}"></div>`).join('');
+    document.querySelectorAll('.swatch').forEach(s => s.addEventListener('click', () => {
+      document.getElementById('biz-bg-color').value = s.dataset.c;
+      renderColors();
+    }));
+  }
 
   function show(id) {
-    ['loading', 'claimed', 'auth-step', 'form-step', 'setup-needed']
+    ['loading', 'claimed', 'auth-step', 'type-step', 'form-step', 'biz-step', 'color-step', 'setup-needed']
       .forEach(s => document.getElementById(s).classList.toggle('hidden', s !== id));
   }
 
@@ -187,7 +302,7 @@
       if (signUpMode) await createUserWithEmailAndPassword(auth, email, password);
       else await signInWithEmailAndPassword(auth, email, password);
       addEmailRow(email);
-      show('form-step');
+      show('type-step');
     } catch (e) {
       errEl.textContent = friendlyAuthError(e.code) || e.message;
     } finally {
@@ -195,6 +310,60 @@
     }
   });
 
+  // Type chooser
+  document.getElementById('pick-personal').addEventListener('click', () => { cardType = 'personal'; show('form-step'); });
+  document.getElementById('pick-business').addEventListener('click', () => { cardType = 'business'; show('biz-step'); });
+
+  // Business → color step
+  document.getElementById('biz-next-btn').addEventListener('click', () => {
+    const name = document.getElementById('biz-name').value.trim();
+    const socials = [...document.querySelectorAll('#biz-socials-list .entry')];
+    const hasSocial = socials.some(r => r.querySelector('.s-handle').value.trim());
+    const errEl = document.getElementById('biz-error');
+    errEl.textContent = '';
+    if (!name) { errEl.textContent = 'Enter the company name.'; return; }
+    if (!hasSocial) { errEl.textContent = 'Add at least one social.'; return; }
+    renderColors();
+    show('color-step');
+  });
+
+  // Business finish
+  document.getElementById('biz-finish-btn').addEventListener('click', async () => {
+    const errEl = document.getElementById('color-error');
+    const btn = document.getElementById('biz-finish-btn');
+    errEl.textContent = '';
+    if (!auth.currentUser) { errEl.textContent = 'Please sign in again.'; return; }
+    btn.disabled = true;
+    const socials = [...document.querySelectorAll('#biz-socials-list .entry')].map(r => ({
+      platform: r.querySelector('.icon-dd').dataset.value,
+      handle: r.querySelector('.s-handle').value.trim(),
+      link: r.querySelector('.s-link').value.trim(),
+    })).filter(s => s.handle || s.link);
+    const data = {
+      cardType: 'business',
+      name: document.getElementById('biz-name').value.trim(),
+      avatar: document.getElementById('biz-logo-data').value || '',
+      websites: [document.getElementById('biz-website').value.trim()].filter(Boolean),
+      socials,
+      emails: [document.getElementById('biz-email').value.trim()].filter(Boolean),
+      phone: { code: document.getElementById('biz-phone-code').value, number: document.getElementById('biz-phone-number').value.trim() },
+      bgColor: document.getElementById('biz-bg-color').value,
+      ownerUid: auth.currentUser.uid,
+      ownerEmail: auth.currentUser.email,
+      claimed: true,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
+    try {
+      await setDoc(doc(db, 'cards', CARD_ID), data);
+      window.location.href = 'card.html?id=' + encodeURIComponent(CARD_ID);
+    } catch (e) {
+      errEl.textContent = e.message;
+      btn.disabled = false;
+    }
+  });
+
+  // Personal finish
   document.getElementById('finish-btn').addEventListener('click', async () => {
     const errEl = document.getElementById('form-error');
     const btn = document.getElementById('finish-btn');
@@ -206,6 +375,7 @@
     try {
       await setDoc(doc(db, 'cards', CARD_ID), {
         ...data,
+        cardType: 'personal',
         ownerUid: auth.currentUser.uid,
         ownerEmail: auth.currentUser.email,
         claimed: true,
