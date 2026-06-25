@@ -707,9 +707,35 @@ export function renderCard(data) {
 
   if (data.telegram) contacts.push({ href: `https://t.me/${clean(data.telegram)}`, icon: CONTACT_ICONS.telegram, label: 'Telegram' });
 
+  // Save to Contacts (vCard)
+  const vcName = (data.name || '').trim();
+  if (vcName) {
+    const parts = vcName.split(' ');
+    const last = parts.length > 1 ? parts.pop() : '';
+    const first = parts.join(' ');
+    const emails = data.emails || (data.email ? [data.email] : []);
+    const phone = typeof data.phone === 'object' ? data.phone : { code: '', number: data.phone || '' };
+    const tel = phone.number ? (phone.code || '') + phone.number : '';
+    const titleLine = data.title ? `TITLE:${data.title}\n` : '';
+    const orgLine = data.company ? `ORG:${data.company}\n` : '';
+    const telLine = tel ? `TEL;TYPE=CELL:${tel}\n` : '';
+    const emailLines = emails.map(e => `EMAIL:${e}\n`).join('');
+    const vcard = `BEGIN:VCARD\nVERSION:3.0\nN:${last};${first};;;\nFN:${vcName}\n${titleLine}${orgLine}${telLine}${emailLines}END:VCARD`;
+    const blob = new Blob([vcard], { type: 'text/vcard' });
+    const vcUrl = URL.createObjectURL(blob);
+    contacts.push({
+      href: vcUrl,
+      icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>',
+      label: 'Save',
+      download: `${vcName}.vcf`,
+    });
+  }
+
   const contactEl = document.getElementById('contact-row');
   if (!contacts.length) document.getElementById('contact-section').classList.add('hidden');
-  else contactEl.innerHTML = contacts.map(c =>
-    `<a class="contact-btn" href="${esc(c.href)}" target="_blank" rel="noopener">
-      <span class="btn-icon">${c.icon}</span><span class="btn-label">${esc(c.label)}</span></a>`).join('');
+  else contactEl.innerHTML = contacts.map(c => {
+    const dl = c.download ? `download="${esc(c.download)}"` : '';
+    return `<a class="contact-btn" href="${esc(c.href)}" ${dl} target="_blank" rel="noopener">
+      <span class="btn-icon">${c.icon}</span><span class="btn-label">${esc(c.label)}</span></a>`;
+  }).join('');
 }
