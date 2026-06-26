@@ -3,6 +3,6 @@
 node_modules/
 
 # Large video files (host these separately, e.g. on Google Drive or Cloudflare R2)
-assets/hero.mp4
-assets/personal/*.mp4
-assets/personal/*.mov
+Portfolio/assets/hero.mp4
+Portfolio/assets/personal/*.mp4
+Portfolio/assets/personal/*.mov
