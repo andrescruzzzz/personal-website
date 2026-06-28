@@ -1,0 +1,13 @@
+{
+  "name": "bacolod-quarry-supply",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Demo website for Bacolod Quarry Supply Co. — order quarry materials and track deliveries live on a map. Static site, deployable to Vercel.",
+  "scripts": {
+    "dev": "serve .",
+    "deploy": "vercel --prod"
+  },
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
+}

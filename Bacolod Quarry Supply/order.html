@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Materials — Bacolod Quarry Supply Co.</title>
+  <meta name="description" content="Order sand, gravel, rocks, and aggregates by the truckload for delivery across Negros Occidental." />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ===== Header / nav ===== -->
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="/">
+        <span class="brand__mark">BQ</span>
+        <span class="brand__name">Bacolod Quarry Supply Co.
+          <small>Negros Occidental</small>
+        </span>
+      </a>
+      <nav class="nav">
+        <a href="/">Home</a>
+        <a href="/order" class="is-active">Order Materials</a>
+        <a href="/track">Track Delivery</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page-title">
+    <div class="container">
+      <h1>Order Quarry Materials</h1>
+      <p>Fill in the short form below. We will confirm your delivery by phone.</p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container form-wrap">
+
+      <!-- ===== Order form (shown first) ===== -->
+      <form id="order-form" class="form-card" novalidate>
+        <div class="field">
+          <label for="fullName">Full Name <span class="required">*</span></label>
+          <input type="text" id="fullName" name="fullName" autocomplete="name" required />
+        </div>
+
+        <div class="field">
+          <label for="company">Company Name <span class="hint">(optional)</span></label>
+          <input type="text" id="company" name="company" autocomplete="organization" />
+        </div>
+
+        <div class="field--row">
+          <div class="field">
+            <label for="mobile">Mobile Number <span class="required">*</span></label>
+            <input type="tel" id="mobile" name="mobile" placeholder="09XX XXX XXXX" autocomplete="tel" required />
+          </div>
+          <div class="field">
+            <label for="email">Email Address <span class="hint">(optional)</span></label>
+            <input type="email" id="email" name="email" placeholder="you@email.com" autocomplete="email" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="address">Delivery Address <span class="required">*</span></label>
+          <input type="text" id="address" name="address" placeholder="Street, Barangay, City / Town" required />
+        </div>
+
+        <div class="field--row">
+          <div class="field">
+            <label for="material">Material Type <span class="required">*</span></label>
+            <!-- Options filled from shared data by js/order.js -->
+            <select id="material" name="material" required>
+              <option value="">— Choose a material —</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="trucks">Quantity (truckloads) <span class="required">*</span></label>
+            <input type="number" id="trucks" name="trucks" min="1" max="50" step="1" value="1" required />
+          </div>
+        </div>
+
+        <div class="field--row">
+          <div class="field">
+            <label for="date">Preferred Delivery Date <span class="required">*</span></label>
+            <input type="date" id="date" name="date" required />
+          </div>
+          <div class="field">
+            <label for="time">Preferred Delivery Time <span class="required">*</span></label>
+            <select id="time" name="time" required>
+              <option value="">— Choose a time —</option>
+              <option>Morning (7:00 AM – 11:00 AM)</option>
+              <option>Midday (11:00 AM – 1:00 PM)</option>
+              <option>Afternoon (1:00 PM – 5:00 PM)</option>
+              <option>Anytime</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="notes">Special Instructions <span class="hint">(optional)</span></label>
+          <textarea id="notes" name="notes" placeholder="Gate access, landmarks, unloading notes, etc."></textarea>
+        </div>
+
+        <p id="form-error" class="required" style="display:none;font-weight:700;"></p>
+
+        <button type="submit" class="btn btn--primary btn--block btn--lg">Place Order</button>
+        <p class="muted text-center" style="margin:14px 0 0;font-size:.9rem;">
+          This is a demo. No payment is required and no real order is placed.
+        </p>
+      </form>
+
+      <!-- ===== Confirmation screen (hidden until submit) ===== -->
+      <div id="confirmation" class="confirm" style="display:none;">
+        <div class="confirm__check" aria-hidden="true">✓</div>
+        <h2>Thank you for your order!</h2>
+        <p>We have received your request. Our team will call you shortly to confirm your delivery.</p>
+        <p style="margin-bottom:2px;"><strong>Your Order ID</strong></p>
+        <div class="confirm__id" id="confirm-id">BQ-2026-000</div>
+        <p><strong>Estimated delivery status:</strong> <span id="confirm-status">Order received — scheduling trucks</span></p>
+        <div id="confirm-details" class="muted" style="margin:10px 0 22px;"></div>
+        <a href="/track" class="btn btn--primary btn--lg" id="track-btn">Track My Order</a>
+        <p style="margin-top:16px;">
+          <a href="/order">Place another order</a>
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer">
+    <div class="container">
+      <strong>Bacolod Quarry Supply Co.</strong> — Reliable Sand, Gravel, and Rock Deliveries Across Negros.<br />
+      Bacolod City, Negros Occidental, Philippines · 0917-000-0000 · orders@bacolodquarry.example
+      <p class="note">Demo website. Sample data only — no real orders, accounts, or payments are processed.</p>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/order.js"></script>
+</body>
+</html>
