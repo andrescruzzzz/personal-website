@@ -1,0 +1,380 @@
+/* ==========================================================================
+   Bacolod Quarry Supply Co. — shared stylesheet
+   Earth-tone construction theme. Mobile-first, large touch targets.
+   ========================================================================== */
+
+/* --- Design tokens ------------------------------------------------------- */
+:root {
+  --sand:        #e9dcc2;   /* sand beige  – page background        */
+  --sand-soft:   #f4ecdc;   /* lighter beige – cards                */
+  --stone:       #8a8377;   /* stone gray  – muted text / borders   */
+  --stone-light: #cfc8ba;   /* light stone – subtle borders         */
+  --charcoal:    #2b2b29;   /* dark gray   – headings / footer      */
+  --charcoal-2:  #3c3b37;   /* slightly lighter dark gray           */
+  --orange:      #e8731c;   /* strong orange accent – buttons       */
+  --orange-dark: #cc5f10;   /* hover state                          */
+  --text:        #33312c;   /* body text                            */
+  --white:       #ffffff;
+  --ok:          #2e7d32;   /* delivered / success                  */
+
+  --radius: 12px;
+  --shadow: 0 4px 14px rgba(43, 43, 41, 0.12);
+  --maxw: 1100px;
+  --font: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* --- Base ---------------------------------------------------------------- */
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--text);
+  background: var(--sand);
+  font-size: 18px;            /* large, readable default */
+  line-height: 1.6;
+}
+
+h1, h2, h3 { color: var(--charcoal); line-height: 1.2; margin: 0 0 .5em; }
+h1 { font-size: 2.4rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.25rem; }
+p  { margin: 0 0 1em; }
+
+a { color: var(--orange-dark); }
+
+.container {
+  width: 100%;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.section { padding: 56px 0; }
+.section--tight { padding: 36px 0; }
+.text-center { text-align: center; }
+.muted { color: var(--stone); }
+
+/* --- Buttons (large, clear) --------------------------------------------- */
+.btn {
+  display: inline-block;
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 16px 28px;
+  border-radius: var(--radius);
+  border: 2px solid transparent;
+  cursor: pointer;
+  text-align: center;
+  transition: background .15s, transform .05s;
+  min-height: 56px;          /* big touch target */
+}
+.btn:active { transform: translateY(1px); }
+
+.btn--primary { background: var(--orange); color: var(--white); }
+.btn--primary:hover { background: var(--orange-dark); }
+
+.btn--secondary {
+  background: transparent;
+  color: var(--charcoal);
+  border-color: var(--charcoal);
+}
+.btn--secondary:hover { background: var(--charcoal); color: var(--white); }
+
+.btn--block { display: block; width: 100%; }
+.btn--lg { font-size: 1.3rem; padding: 18px 34px; }
+
+/* --- Header / nav -------------------------------------------------------- */
+.site-header {
+  background: var(--charcoal);
+  color: var(--white);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+.site-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 70px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--white);
+}
+.brand__mark {
+  background: var(--orange);
+  color: var(--white);
+  font-weight: 800;
+  border-radius: 10px;
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  font-size: 1.1rem;
+  flex: none;
+}
+.brand__name { font-weight: 800; font-size: 1.15rem; line-height: 1.1; }
+.brand__name small { display: block; font-weight: 500; font-size: .7rem; color: var(--sand); letter-spacing: .04em; }
+
+.nav { display: flex; gap: 8px; flex-wrap: wrap; }
+.nav a {
+  color: var(--white);
+  text-decoration: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+}
+.nav a:hover { background: var(--charcoal-2); }
+.nav a.is-active { background: var(--orange); }
+
+/* --- Hero ---------------------------------------------------------------- */
+.hero {
+  background:
+    linear-gradient(rgba(31,30,28,.72), rgba(31,30,28,.72)),
+    url("../assets/hero.svg") center/cover no-repeat,
+    var(--charcoal);
+  color: var(--white);
+  padding: 80px 0;
+}
+.hero h1 { color: var(--white); max-width: 16ch; }
+.hero .tagline { font-size: 1.4rem; color: var(--sand); font-weight: 600; margin-bottom: .4em; }
+.hero .lead { font-size: 1.15rem; max-width: 56ch; color: #ece7dc; }
+.hero__buttons { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 26px; }
+.hero .btn--secondary { color: var(--white); border-color: var(--white); }
+.hero .btn--secondary:hover { background: var(--white); color: var(--charcoal); }
+
+/* --- Generic cards / grids ---------------------------------------------- */
+.grid { display: grid; gap: 22px; }
+.grid--3 { grid-template-columns: repeat(3, 1fr); }
+.grid--2 { grid-template-columns: repeat(2, 1fr); }
+
+.card {
+  background: var(--sand-soft);
+  border: 1px solid var(--stone-light);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+.card h3 { margin-bottom: .25em; }
+.card .use { font-size: .95rem; color: var(--stone); margin: 0 0 16px; }
+.card .use strong { color: var(--charcoal-2); }
+.card .btn { margin-top: auto; }
+
+.product-card__icon {
+  font-size: 2rem;            /* simple, friendly emoji marker */
+  margin-bottom: 8px;
+}
+
+/* --- Feature list (why choose us) --------------------------------------- */
+.features { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; grid-template-columns: repeat(2,1fr); }
+.features li {
+  background: var(--sand-soft);
+  border-left: 6px solid var(--orange);
+  border-radius: 8px;
+  padding: 18px 20px;
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+/* --- Service area band --------------------------------------------------- */
+.band { background: var(--charcoal); color: var(--sand); }
+.band h2 { color: var(--white); }
+
+/* --- CTA ----------------------------------------------------------------- */
+.cta { background: var(--orange); color: var(--white); text-align: center; }
+.cta h2 { color: var(--white); }
+.cta .btn--primary { background: var(--charcoal); }
+.cta .btn--primary:hover { background: #000; }
+
+/* --- Footer -------------------------------------------------------------- */
+.site-footer {
+  background: var(--charcoal);
+  color: var(--sand);
+  padding: 32px 0;
+  font-size: .95rem;
+}
+.site-footer a { color: var(--orange); }
+.site-footer .note { color: var(--stone); font-size: .85rem; margin-top: 10px; }
+
+/* --- Forms --------------------------------------------------------------- */
+.form-wrap { max-width: 720px; margin: 0 auto; }
+.form-card {
+  background: var(--sand-soft);
+  border: 1px solid var(--stone-light);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px;
+}
+.field { margin-bottom: 20px; }
+.field label { display: block; font-weight: 700; margin-bottom: 8px; color: var(--charcoal); }
+.field .hint { font-weight: 400; color: var(--stone); font-size: .9rem; }
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  font-size: 1.1rem;
+  font-family: inherit;
+  padding: 14px 16px;
+  border: 2px solid var(--stone-light);
+  border-radius: 10px;
+  background: var(--white);
+  color: var(--text);
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus { outline: 3px solid rgba(232,115,28,.35); border-color: var(--orange); }
+.field textarea { resize: vertical; min-height: 90px; }
+.field--row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.required { color: var(--orange-dark); }
+
+/* --- Confirmation screen ------------------------------------------------- */
+.confirm {
+  text-align: center;
+  background: var(--sand-soft);
+  border: 1px solid var(--stone-light);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 40px 28px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+.confirm__check {
+  width: 76px; height: 76px; border-radius: 50%;
+  background: var(--ok); color: #fff;
+  display: grid; place-items: center;
+  font-size: 2.4rem; margin: 0 auto 18px;
+}
+.confirm__id {
+  display: inline-block;
+  background: var(--charcoal); color: var(--white);
+  font-size: 1.4rem; font-weight: 800; letter-spacing: .06em;
+  padding: 10px 22px; border-radius: 10px; margin: 6px 0 18px;
+}
+
+/* --- Tracking page ------------------------------------------------------- */
+.search-bar {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  max-width: 560px; margin: 0 auto 8px;
+}
+.search-bar input {
+  flex: 1 1 240px;
+  font-size: 1.2rem; padding: 14px 16px;
+  border: 2px solid var(--stone-light); border-radius: 10px;
+  text-transform: uppercase;
+}
+.hint-id { text-align: center; color: var(--stone); margin-bottom: 28px; }
+.hint-id code {
+  background: var(--sand-soft); padding: 2px 8px; border-radius: 6px;
+  font-size: 1rem; color: var(--charcoal); font-weight: 700;
+}
+
+.order-summary {
+  background: var(--sand-soft);
+  border: 1px solid var(--stone-light);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.order-summary__head {
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 10px; margin-bottom: 16px;
+}
+.summary-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+}
+.summary-grid .item { background: var(--white); border-radius: 10px; padding: 14px 16px; border: 1px solid var(--stone-light); }
+.summary-grid .item .k { font-size: .85rem; color: var(--stone); font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
+.summary-grid .item .v { font-size: 1.15rem; font-weight: 700; color: var(--charcoal); }
+
+/* Layout: map + truck list side by side on desktop */
+.track-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; align-items: start; }
+#map {
+  height: 560px; width: 100%;
+  border-radius: var(--radius);
+  border: 2px solid var(--stone-light);
+  box-shadow: var(--shadow);
+  z-index: 1;
+}
+
+.truck-list { display: grid; gap: 14px; max-height: 560px; overflow-y: auto; padding-right: 4px; }
+.truck-card {
+  background: var(--sand-soft);
+  border: 1px solid var(--stone-light);
+  border-left: 6px solid var(--stone);
+  border-radius: 10px;
+  padding: 16px;
+}
+.truck-card.is-focused { border-left-color: var(--orange); box-shadow: var(--shadow); }
+.truck-card__top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }
+.truck-card__name { font-weight: 800; font-size: 1.1rem; color: var(--charcoal); }
+.truck-card__rows { font-size: .98rem; margin-bottom: 12px; }
+.truck-card__rows div { display: flex; justify-content: space-between; gap: 10px; padding: 3px 0; border-bottom: 1px dashed var(--stone-light); }
+.truck-card__rows div:last-child { border-bottom: 0; }
+.truck-card__rows .k { color: var(--stone); }
+.truck-card__rows .v { font-weight: 700; color: var(--charcoal-2); text-align: right; }
+.truck-card .btn { padding: 10px 16px; font-size: 1rem; min-height: 0; }
+
+/* Status pills (shared) */
+.status {
+  display: inline-block;
+  font-size: .8rem; font-weight: 800;
+  padding: 5px 12px; border-radius: 999px;
+  text-transform: uppercase; letter-spacing: .03em;
+  white-space: nowrap;
+}
+.status--loading  { background: #6d6a63; color: #fff; }  /* Loading at Quarry */
+.status--onway    { background: #2f6fb0; color: #fff; }  /* On the Way */
+.status--near     { background: #b8851a; color: #fff; }  /* Near Bacolod */
+.status--arriving { background: var(--orange); color: #fff; } /* Arriving Soon */
+.status--delivered{ background: var(--ok); color: #fff; }     /* Delivered */
+
+/* Plain-language status note */
+.plain-status {
+  background: var(--sand-soft);
+  border: 1px solid var(--stone-light);
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+
+/* Leaflet popup tweaks */
+.leaflet-popup-content { font-family: var(--font); font-size: .95rem; }
+.leaflet-popup-content b { color: var(--charcoal); }
+
+.empty-note { text-align: center; color: var(--stone); padding: 30px; }
+
+.page-title { background: var(--charcoal); color: #fff; padding: 36px 0; }
+.page-title h1 { color: #fff; margin: 0; }
+.page-title p { margin: 6px 0 0; color: var(--sand); }
+
+/* --- Responsive ---------------------------------------------------------- */
+@media (max-width: 860px) {
+  h1 { font-size: 2rem; }
+  .grid--3 { grid-template-columns: 1fr 1fr; }
+  .summary-grid { grid-template-columns: 1fr 1fr; }
+  .track-layout { grid-template-columns: 1fr; }
+  #map { height: 420px; }
+  .truck-list { max-height: none; }
+}
+@media (max-width: 560px) {
+  body { font-size: 17px; }
+  .grid--3, .grid--2, .features { grid-template-columns: 1fr; }
+  .summary-grid { grid-template-columns: 1fr; }
+  .field--row { grid-template-columns: 1fr; }
+  .hero { padding: 56px 0; }
+  .hero__buttons .btn { width: 100%; }
+  .site-header .container { min-height: 60px; }
+  .brand__name { font-size: 1rem; }
+}

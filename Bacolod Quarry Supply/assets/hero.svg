@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <!-- Simple earth-tone quarry landscape used as the hero background -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#caa46f"/>
+      <stop offset="1" stop-color="#e9dcc2"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <!-- distant hills -->
+  <path d="M0 560 L260 470 L520 540 L820 440 L1120 530 L1380 460 L1600 520 L1600 900 L0 900 Z" fill="#8a8377"/>
+  <!-- quarry terraces -->
+  <path d="M0 640 L400 600 L780 660 L1180 610 L1600 660 L1600 900 L0 900 Z" fill="#6f6a60"/>
+  <path d="M0 740 L500 710 L1000 760 L1600 720 L1600 900 L0 900 Z" fill="#57534b"/>
+  <!-- gravel piles -->
+  <path d="M120 900 L320 700 L520 900 Z" fill="#b69a6e"/>
+  <path d="M420 900 L640 740 L860 900 Z" fill="#9c8559"/>
+  <path d="M820 900 L1080 720 L1340 900 Z" fill="#b69a6e"/>
+  <path d="M1180 900 L1380 760 L1580 900 Z" fill="#9c8559"/>
+</svg>
